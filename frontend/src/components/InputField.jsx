@@ -36,6 +36,7 @@ const InputField = ({
               className="focus:outline-none"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
+              {/* TODO: Change to lucide icon */}
               <img
                 src="https://cdn.builder.io/api/v1/image/assets/bde9493d25ce464797f593ad6ddaebdc/b43ac634a20018d4b6a66f1804e960f7d3e5e437?placeholderIfAbsent=true"
                 alt={showPassword ? "Hide password" : "Show password"}

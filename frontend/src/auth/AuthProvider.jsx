@@ -5,24 +5,26 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = Cookies.get("Mock_token");
     if (token) {
       setUser({ name: "Mock User" });
     }
+    setLoading(false);
   }, []);
 
-  const login = (userName, password) => {
-    if (userName == "admin" && password == "1234") {
+  const login = (email, password) => {
+    if (email == "admin" && password == "1234") {
       Cookies.set("Mock_token", "mocked_token_value", { expires: 1 }); // expires in 1 day
       setUser({ name: "Mock User" });
-      return true;
+      return { success: true, message: "login success" };
     }
-    return false;
+    return { success: false, message: "invalid credentials" };
   };
 
-  const register = (userName, password, confirmPassword) => {
+  const signup = (email, password, confirmPassword) => {
     if (password !== confirmPassword) {
       return { success: false, message: "passwords do not match" };
     }
@@ -35,8 +37,8 @@ export const AuthProvider = ({ children }) => {
     }
 
     Cookies.set("Mock_token", "mocked_token_value", { expires: 1 });
-    setUser({ name: userName });
-    return { success: true, message: "register success" };
+    setUser({ name: email });
+    return { success: true, message: "sign up success" };
   };
 
   const logout = () => {
@@ -45,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

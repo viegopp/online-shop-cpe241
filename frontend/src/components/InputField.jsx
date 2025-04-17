@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const InputField = ({
   type = "text",
@@ -33,15 +34,14 @@ const InputField = ({
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="focus:outline-none"
+              className="focus:outline-none text-slate-400 hover:text-slate-600"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {/* TODO: Change to lucide icon */}
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/bde9493d25ce464797f593ad6ddaebdc/b43ac634a20018d4b6a66f1804e960f7d3e5e437?placeholderIfAbsent=true"
-                alt={showPassword ? "Hide password" : "Show password"}
-                className="object-contain shrink-0 self-stretch my-auto aspect-square w-[13px]"
-              />
+              {showPassword ? (
+                <Eye className="w-4 h-4" />
+              ) : (
+                <EyeOff className="w-4 h-4" />
+              )}
             </button>
           )}
         </div>

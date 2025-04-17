@@ -5,9 +5,9 @@ const RememberMeCheckbox = ({ checked, onChange }) => {
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 text-slate-600 border-slate-300 rounded focus:ring-slate-500"
+        className="w-4 h-4 text-slate-200 border-slate-200 rounded focus:ring-slate-500"
       />
-      <span className="text-sm text-slate-600">Remember me</span>
+      <span className="text-sm text-slate-500">Remember me</span>
     </label>
   );
 };

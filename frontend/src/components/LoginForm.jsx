@@ -35,9 +35,8 @@ const LoginForm = () => {
     e.preventDefault();
     setError("");
 
-    // TODO: Change "userName" to "email"
     // TODO: Check for "Remember Me" functionality (Optional)
-    const success = login(formData.email, formData.password);
+    const { success, message } = login(formData.email, formData.password);
 
     if (success) {
       navigate("/dashboard");
@@ -52,7 +51,7 @@ const LoginForm = () => {
   };
 
   const handleSignUp = () => {
-    navigate("/register");
+    navigate("/signup");
   };
 
   return (
@@ -90,7 +89,7 @@ const LoginForm = () => {
           <button
             type="button"
             onClick={handleForgotPassword}
-            className="text-xs font-medium leading-6 text-center text-black underline"
+            className="text-xs font-medium leading-6 text-center text-slate-700 underline"
           >
             Forget Password?
           </button>
@@ -105,7 +104,7 @@ const LoginForm = () => {
           <button
             type="button"
             onClick={handleSignUp}
-            className="text-black underline"
+            className="text-slate-700 underline"
           >
             Sign Up
           </button>

@@ -1,1 +1,19 @@
 @import "tailwindcss";
+/* @import "tailwindcss/preflight";
+@import "tailwindcss/utilities"; */
+
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/fonts/satoshi-variable/WEB/fonts/Satoshi-Variable.woff2') format('woff2'),
+       url('./assets/fonts/satoshi-variable/WEB/fonts/Satoshi-Variable.woff') format('woff');
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@layer base {
+  html {
+    font-family: 'Satoshi', system-ui, sans-serif;
+  }
+}

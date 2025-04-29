@@ -17,10 +17,16 @@ const App = () => (
           element={
             <PrivateRoute>
               <Dashboard />
-              {/* Replace with your Dashboard component */}
             </PrivateRoute>
           }
         />
+        <Route path="/inventory/stock" element={<div>Stock Management Page</div>} />
+        <Route path="/inventory/products" element={<div>Products & Reviews Page</div>} />
+        <Route path="/orders/track" element={<div>Track Orders Page</div>} />
+        <Route path="/users/customers" element={<div>Customers Page</div>} />
+        <Route path="/users/admins" element={<div>Admins Page</div>} />
+        <Route path="/flash-sales" element={<div>Flash Sales Page</div>} />
+        <Route path="/report" element={<div>Report Page</div>} />
       </Routes>
     </BrowserRouter>
   </AuthProvider>

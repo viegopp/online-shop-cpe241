@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/LogIn";
+import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./auth/AuthProvider";
 
@@ -15,6 +16,7 @@ const App = () => (
           path="/dashboard"
           element={
             <PrivateRoute>
+              <Dashboard />
               {/* Replace with your Dashboard component */}
             </PrivateRoute>
           }

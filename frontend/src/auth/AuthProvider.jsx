@@ -9,16 +9,23 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = Cookies.get("Mock_token");
+    const role = Cookies.get("user_role");
     if (token) {
-      setUser({ name: "Mock User" });
+      setUser({ name: "Mock User", role: role || "customer" });
     }
     setLoading(false);
   }, []);
 
   const login = (email, password) => {
-    if (email == "admin" && password == "1234") {
+    if (email === "admin" && password === "1234") {
       Cookies.set("Mock_token", "mocked_token_value", { expires: 1 }); // expires in 1 day
-      setUser({ name: "Mock User" });
+      Cookies.set("user_role", "admin", { expires: 1 });
+      setUser({ name: "Admin User", role: "admin" });
+      return { success: true, message: "login success" };
+    } else if (email === "customer" && password === "1234") {
+      Cookies.set("Mock_token", "mocked_token_value", { expires: 1 });
+      Cookies.set("user_role", "customer", { expires: 1 });
+      setUser({ name: "Customer User", role: "customer" });
       return { success: true, message: "login success" };
     }
     return { success: false, message: "invalid credentials" };
@@ -37,12 +44,14 @@ export const AuthProvider = ({ children }) => {
     }
 
     Cookies.set("Mock_token", "mocked_token_value", { expires: 1 });
-    setUser({ name: email });
+    Cookies.set("user_role", "customer", { expires: 1 });
+    setUser({ name: email, role: "customer" });
     return { success: true, message: "sign up success" };
   };
 
   const logout = () => {
     Cookies.remove("Mock_token");
+    Cookies.remove("user_role");
     setUser(null);
   };
 

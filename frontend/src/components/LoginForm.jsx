@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import InputField from "./InputField";
 import RememberMeCheckbox from "./RememberMeCheckbox";
 import Button from "./Button";
@@ -8,6 +8,7 @@ import { useAuth } from "../auth/AuthProvider";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
@@ -15,6 +16,9 @@ const LoginForm = () => {
     rememberMe: false,
   });
   const [error, setError] = useState("");
+
+  // Determine if this is an admin or customer login page
+  const isAdmin = location.pathname.includes("/admin/");
 
   const handleInputChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -39,7 +43,8 @@ const LoginForm = () => {
     const { success, message } = login(formData.email, formData.password);
 
     if (success) {
-      navigate("/dashboard");
+      // Redirect based on user type
+      navigate(isAdmin ? "/admin/homepage" : "/customer/homepage");
     } else {
       setError("Invalid username or password");
     }
@@ -51,7 +56,8 @@ const LoginForm = () => {
   };
 
   const handleSignUp = () => {
-    navigate("/signup");
+    // Only customer should be able to sign up
+    navigate("/customer/signup");
   };
 
   return (
@@ -61,7 +67,7 @@ const LoginForm = () => {
     >
       <div className="flex overflow-hidden flex-col p-2.5 w-full bg-white">
         <h2 className="self-start text-2xl font-bold leading-none text-center text-black">
-          Login
+          {isAdmin ? "Admin Login" : "Customer Login"}
         </h2>
 
         {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
@@ -99,16 +105,18 @@ const LoginForm = () => {
           LOGIN
         </Button>
 
-        <p className="self-start mt-4 text-xs font-medium leading-6 text-center">
-          <span className="text-slate-600">Don't have an account ?</span>{" "}
-          <button
-            type="button"
-            onClick={handleSignUp}
-            className="text-slate-700 underline"
-          >
-            Sign Up
-          </button>
-        </p>
+        {!isAdmin && (
+          <p className="self-start mt-4 text-xs font-medium leading-6 text-center">
+            <span className="text-slate-600">Don't have an account ?</span>{" "}
+            <button
+              type="button"
+              onClick={handleSignUp}
+              className="text-slate-700 underline"
+            >
+              Sign Up
+            </button>
+          </p>
+        )}
       </div>
     </form>
   );

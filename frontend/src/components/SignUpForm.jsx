@@ -51,7 +51,7 @@ const SignUpForm = () => {
     );
 
     if (success) {
-      navigate("/login");
+      navigate("/customer/login");
     } else {
       setError(message);
     }
@@ -152,7 +152,7 @@ const SignUpForm = () => {
           <span className="text-slate-600">Have an account?</span>{" "}
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/customer/login")}
             className="text-slate-700 underline"
           >
             Log in

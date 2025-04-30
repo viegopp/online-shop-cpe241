@@ -1,8 +1,8 @@
-import SignUpForm from "../components/SignUpForm";
+import LoginForm from "../../components/LoginForm";
 
-const SignUp = () => {
+const LoginCustomer = () => {
   return (
-    <main className="flex overflow-hidden flex-col items-center px-20 pt-24 pb-72 bg-white max-md:px-5 max-md:py-24">
+    <main className="flex overflow-hidden flex-col items-center px-20 pt-36 pb-72 bg-white max-md:px-5 max-md:py-24">
       <div className="flex flex-col items-center max-w-full w-[405px]">
         <div className="flex items-center gap-3">
           <img src="/logo.svg" alt="OnlineShop Logo" className="w-12 h-12" />
@@ -10,10 +10,10 @@ const SignUp = () => {
             OnlineShop
           </h1>
         </div>
-        <SignUpForm />
+        <LoginForm />
       </div>
     </main>
   );
 };
 
-export default SignUp;
+export default LoginCustomer;

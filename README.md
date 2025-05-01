@@ -29,8 +29,16 @@ npm run dev
 # Navigate to backend directory
 cd backend
 
-# Initial
-echo "ทักเฟสหาพี่ฟีน"
+# DB Configuration in .env file
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=online_shop_cpe241 # replace with your database name
+DB_USERNAME=root # replace with your database server username
+DB_PASSWORD=password # replace with your database server username
+
+# Start development server
+php artisan serve
 ```
 
 ## Features

@@ -14,11 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
 
     ->withMiddleware(function (Middleware $middleware) {
-        // Register global middlewares
-        $middleware->append([
-            \App\Http\Middleware\CorsMiddleware::class,
-        ]);
-
         // Alias route-specific middlewares
         $middleware->alias([
             'admin.auth' => \App\Http\Middleware\AdminAuthMiddleware::class,

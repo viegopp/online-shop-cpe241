@@ -25,7 +25,7 @@ Route::prefix('admin')->group(function () {
 
 // Customer Routes
 Route::prefix('customer')->group(function () {
-    // Route::post('register', [CustomerAuthController::class, 'register']);
+    Route::post('register', [CustomerAuthController::class, 'register']);
     Route::post('login', [CustomerAuthController::class, 'login']);
 
 

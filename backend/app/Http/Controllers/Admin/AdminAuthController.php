@@ -19,7 +19,7 @@ class AdminAuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:8',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -30,7 +30,7 @@ class AdminAuthController extends Controller
 
         try {
             // Find admin by email
-            $admin = DB::selectOne("
+            $admins = DB::select("
                 SELECT
                 u.user_id,
                 a.admin_id,
@@ -44,6 +44,9 @@ class AdminAuthController extends Controller
                 WHERE u.email = ? AND u.deleted_at IS NULL
                 LIMIT 1
             ", [$request->email]);
+
+            // Check if an admin exists
+            $admin = $admins ? $admins[0] : null;
 
             // Check if admin exists
             if (!$admin) {
@@ -90,7 +93,8 @@ class AdminAuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Something went wrong'
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

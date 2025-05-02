@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import InputField from "./InputField";
-import RememberMeCheckbox from "./RememberMeCheckbox";
-import Button from "./Button";
-import { useAuth } from "../auth/AuthProvider";
+import InputFieldAuth from "./InputFieldAuth";
+import RememberMeCheckbox from "../forms/RememberMeCheckbox";
+import Button from "../common/Button";
+import { useAuth } from "../../auth/AuthProvider";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -72,14 +72,14 @@ const LoginForm = () => {
 
         {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
 
-        <InputField
+        <InputFieldAuth
           type="text"
           placeholder="Email / Phone"
           value={formData.email}
           onChange={handleInputChange("email")}
         />
 
-        <InputField
+        <InputFieldAuth
           type="password"
           placeholder="Password"
           value={formData.password}

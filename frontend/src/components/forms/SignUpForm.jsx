@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputField from "./InputField";
-import Button from "./Button";
-import { useAuth } from "../auth/AuthProvider";
+import Button from "../common/Button";
+import { useAuth } from "../../auth/AuthProvider";
 
 const SignUpForm = () => {
   const navigate = useNavigate();

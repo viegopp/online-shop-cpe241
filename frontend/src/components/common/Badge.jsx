@@ -2,7 +2,7 @@ import React from "react";
 
 const Badge = ({ icon: Icon, title, description }) => {
   return (
-    <article className="text-xs font-medium w-[274px] text-slate-500">
+    <article className="text-xs font-medium w-[274px] text-slate-500 cursor-pointer">
       <div className="flex gap-4 px-4 py-4 bg-white rounded-xl border border-solid border-slate-200">
         <div className="shrink-0 w-9 h-9 flex items-center justify-center">
           <Icon className="text-slate-500" size={36} strokeWidth={1.6} />

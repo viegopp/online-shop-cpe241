@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-const InputField = ({
+const InputFieldAuth = ({
   type = "text",
   placeholder,
   value,
@@ -50,4 +50,4 @@ const InputField = ({
   );
 };
 
-export default InputField;
+export default InputFieldAuth;

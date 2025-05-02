@@ -10,9 +10,8 @@ const Breadcrumbs = ({ items = [], title = "Dashboard" }) => {
   }
 
   return (
-    <div className="flex justify-between items-center w-full mx-auto py-4 px-5">
+    <div className="flex justify-between items-center w-full mx-auto my-4">
       <h1 className="font-satoshi font-bold text-xl text-slate-900">{title}</h1>
-
       <nav className="flex items-center gap-2">
         {items.map((item, index) => (
           <React.Fragment key={index}>

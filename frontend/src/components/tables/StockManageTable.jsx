@@ -239,14 +239,16 @@ const StockManageTable = ({ products = [] }) => {
       <div className="relative" ref={toolbarRef}>
         <TableToolbar
           onSearch={handleSearch}
+          searchPlaceHolder={"Products"}
           onFilter={handleFilter}
-          onAddProduct={handleAddProduct}
+          onAddItem={handleAddProduct}
+          itemName={"Product"}
         />
 
         {/* Filter Dropdown */}
         {filterOpen && (
           <div
-            className="absolute right-0 top-8 bg-white border border-slate-200 rounded shadow-md z-10 p-3 w-64"
+            className="absolute left-0 top-8 bg-white border border-slate-200 rounded shadow-md z-10 p-3 w-64"
             ref={filterRef}
           >
             <div className="mb-3">
@@ -571,3 +573,25 @@ const StockManageTable = ({ products = [] }) => {
 };
 
 export default StockManageTable;
+
+/*
+Example Usage:
+<StockManageTable
+  products={[
+    {
+      id: "000001",
+      name: "Product 1",
+      available: true,
+      category: "Beverage",
+      stock: 50,
+    },
+    {
+      id: "000002",
+      name: "Product 2",
+      available: false,
+      category: "Accessory",
+      stock: 0,
+    },
+  ]}
+/>
+*/

@@ -1,15 +1,15 @@
 INSERT INTO users (gender, first_name, last_name, email, is_email_verified, password, image_profile_path, phone_number) 
 VALUES 
-('male', 'Phoorin', 'Chinphuad', 'phoorin.chin@mail.kmutt.ac.th', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD1', '/images/profile/user1.jpg', '0956934807'),
-('female', 'Skibidi', 'Toilet', 'skibidi_Toilet@gmail.com', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD2', '/images/profile/user2.jpg', '0951234567'),
-('other', 'Moodeng', 'Auan', 'moodengDUSIT@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD3', '/images/profile/user3.jpg', '0953948591'),
-('male', 'Mooham', 'Zamlam', 'moohamZL@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD4', '/images/profile/user4.jpg', '0953948501'),
-('female', 'Drop', 'Database', 'database.hard@mail.kmutt.ac.th', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD5', '/images/profile/user5.jpg', '0954859295'),
-('male', 'Mooham', 'Chugra', 'moohamChugra@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD6', '/images/profile/user6.jpg', '0954059382'),
-('female', 'Feen', 'Badboy', 'feenBadboy@gmail.com', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD7', '/images/profile/user7.jpg', '0950495032'),
-('male', 'Muay', 'Kill', 'muayKill@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD8', '/images/profile/user8.jpg', '0954059281'),
-('female', 'Pee', 'Group', 'peeLQ@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD9', '/images/profile/user9.jpg', '0950593813'),
-('male', 'Database', 'Drop', 'database.ez@mail.kmutt.ac.th', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD10', '/images/profile/user10.jpg', '0952945943');
+('male', 'Phoorin', 'Chinphuad', 'phoorin.chin@mail.kmutt.ac.th', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD1', 'https://i.pravatar.cc/300', '0956934807'),
+('female', 'Skibidi', 'Toilet', 'skibidi_Toilet@gmail.com', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD2', 'https://i.pravatar.cc/300', '0951234567'),
+('other', 'Moodeng', 'Auan', 'moodengDUSIT@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD3', 'https://i.pravatar.cc/300', '0953948591'),
+('male', 'Mooham', 'Zamlam', 'moohamZL@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD4', 'https://i.pravatar.cc/300', '0953948501'),
+('female', 'Drop', 'Database', 'database.hard@mail.kmutt.ac.th', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD5', 'https://i.pravatar.cc/300', '0954859295'),
+('male', 'Mooham', 'Chugra', 'moohamChugra@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD6', 'https://i.pravatar.cc/300', '0954059382'),
+('female', 'Feen', 'Badboy', 'feenBadboy@gmail.com', FALSE, '$2y$10$EXAMPLEHASHEDPASSWORD7', 'https://i.pravatar.cc/300', '0950495032'),
+('male', 'Muay', 'Kill', 'muayKill@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD8', 'https://i.pravatar.cc/300', '0954059281'),
+('female', 'Pee', 'Group', 'peeLQ@gmail.com', TRUE, '$2y$10$EXAMPLEHASHEDPASSWORD9', 'https://i.pravatar.cc/300', '0950593813'),
+('male', 'Database', 'Drop', 'database.ez@mail.kmutt.ac.th', FALSE, 'https://i.pravatar.cc/300', '/images/profile/user10.jpg', '0952945943');
 
 -- Insert Roles
 INSERT INTO roles (role_name) VALUES 

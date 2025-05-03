@@ -60,7 +60,7 @@ const AdminProfile = ({ adminData: initialData, onSave }) => {
   const fullName = `${adminData.firstName} ${adminData.lastName}`;
 
   return (
-    <div className="max-w-[912px] w-full mx-auto bg-white border border-slate-200 rounded-lg p-5">
+    <div className="w-full mx-auto bg-white border border-slate-200 rounded-lg p-5">
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-lg font-bold font-satoshi text-slate-900">
           Personal Information

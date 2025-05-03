@@ -4,7 +4,7 @@ import { Star, CornerDownRight, Trash } from "lucide-react";
 const ReviewManage = ({ comments = [], onReply, onDelete, className = "" }) => {
   return (
     <div
-      className={`flex flex-col w-full max-w-[910px] bg-white border border-slate-200 rounded-lg p-6 gap-4 ${className}`}
+      className={`flex flex-col w-full bg-white border border-slate-200 rounded-lg p-6 gap-4 ${className}`}
     >
       {comments.map((comment) => (
         <div
@@ -34,17 +34,17 @@ const ReviewManage = ({ comments = [], onReply, onDelete, className = "" }) => {
                 {onReply && (
                   <button
                     onClick={() => onReply(comment)}
-                    className="focus:outline-none"
+                    className="focus:outline-none cursor-pointer p-1.5 rounded hover:bg-slate-50"
                   >
-                    <CornerDownRight size={14} className="text-slate-400" />
+                    <CornerDownRight size={14} className="text-slate-500" />
                   </button>
                 )}
                 {onDelete && (
                   <button
                     onClick={() => onDelete(comment)}
-                    className="focus:outline-none"
+                    className="focus:outline-none cursor-pointer p-1.5 rounded hover:bg-slate-50"
                   >
-                    <Trash size={14} className="text-slate-400" />
+                    <Trash size={14} className="text-slate-500" />
                   </button>
                 )}
               </div>

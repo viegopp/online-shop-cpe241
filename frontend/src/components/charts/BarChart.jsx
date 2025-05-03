@@ -1,8 +1,7 @@
 import React from "react";
 import Chart from "react-apexcharts";
 
-const BarChart = ({ data = [], categories = [] }) => {
-  console.log("BarChart data", data.length);
+const BarChart = ({ data = [], categories = [], title = "Barchart" }) => {
   const defaultData = [141, 110, 170, 70, 120, 31, 89, 130, 70, 110, 159, 41];
   const defaultCategories = [
     "1",
@@ -35,7 +34,7 @@ const BarChart = ({ data = [], categories = [] }) => {
       bar: {
         borderRadius: 3,
         borderRadiusApplication: "end",
-        columnWidth: "22px",
+        columnWidth: "24px",
       },
     },
     dataLabels: {
@@ -118,9 +117,9 @@ const BarChart = ({ data = [], categories = [] }) => {
   ];
 
   return (
-    <div className="w-[912px]  p-8 rounded-2xl border border-slate-200 bg-white">
+    <div className="w-full  p-8 rounded-2xl border border-slate-200 bg-white">
       <h2 className="font-bold text-2xl text-slate-900 mb-5 font-satoshi">
-        Bar chart
+        {title}
       </h2>
       <div className="w-full h-[248px] relative">
         <Chart options={options} series={series} type="bar" height="100%" />

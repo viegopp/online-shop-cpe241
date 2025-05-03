@@ -1,11 +1,12 @@
 import React from "react";
-import { ChevronFirstIcon, ChevronDown } from "lucide-react";
+import { ChevronFirstIcon, ChevronDown, ChevronLastIcon } from "lucide-react";
 
 const Topbar = ({
   userName = "Mooham Chugra",
   userRole = "Super Admin",
   userAvatar = "https://i.pravatar.cc/200",
-  onBack,
+  isSidebarCollapsed = false,
+  onToggleSidebar,
   onUserMenuToggle,
   className = "",
 }) => {
@@ -13,12 +14,16 @@ const Topbar = ({
     <div
       className={`flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white h-20 ${className}`}
     >
-      {/* Back Button */}
+      {/* Toggle SideBar Button */}
       <button
-        onClick={onBack}
-        className="w-[46px] h-[46px] rounded-lg border border-slate-200 bg-white flex items-center justify-center"
+        onClick={onToggleSidebar}
+        className="w-[46px] h-[46px] rounded-lg border border-slate-200 bg-white flex items-center justify-center cursor-pointer hover:bg-slate-50/50"
       >
-        <ChevronFirstIcon className="text-slate-500" size={24} />
+        {isSidebarCollapsed ? (
+          <ChevronLastIcon className="text-slate-500" size={24} />
+        ) : (
+          <ChevronFirstIcon className="text-slate-500" size={24} />
+        )}
       </button>
 
       {/* User Profile */}
@@ -32,7 +37,7 @@ const Topbar = ({
           <img
             src={userAvatar}
             alt={userName}
-            className="w-11.5 h-11.5 rounded-full object-cover"
+            className="w-11 h-11 rounded-full object-cover"
           />
           <button onClick={onUserMenuToggle} className="px-2">
             <ChevronDown className="text-slate-500" size={20} />

@@ -8,7 +8,8 @@ import {
 } from "./TableElements";
 import Pagination from "./Pagination";
 import TableToolbar from "./TableToolbar";
-import { MoreHorizontal, Trash } from "lucide-react";
+import { PackageSearchIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const OrderTrackingTable = ({ orders = [] }) => {
   // Sample data
@@ -203,7 +204,7 @@ const OrderTrackingTable = ({ orders = [] }) => {
   };
 
   return (
-    <div className="w-full max-w-[912px] mx-auto flex flex-col gap-2">
+    <div className="w-full mx-auto flex flex-col gap-2">
       <div className="relative" ref={toolbarRef}>
         <TableToolbar
           onSearch={handleSearch}
@@ -348,6 +349,12 @@ const OrderTrackingTable = ({ orders = [] }) => {
                 >
                   Order Status
                 </TableCell>
+                <TableCell
+                  isHeader
+                  className="w-[16%] px-7 py-3 text-sm font-bold text-slate-900"
+                >
+                  Action
+                </TableCell>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -387,6 +394,16 @@ const OrderTrackingTable = ({ orders = [] }) => {
                             {order.status}
                           </p>
                         </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="w-[16%] px-7 py-3 text-xs ">
+                      <div className="flex justify-start ">
+                        <NavLink to={`/admin/orders/track/${order.id}`}>
+                          <button className="flex gap-1 text-slate-500 hover:text-slate-800 focus:outline-none bg-slate-50 rounded-md p-1.5 cursor-pointer">
+                            <PackageSearchIcon size={16} strokeWidth={1.4} />
+                            <span>Details</span>
+                          </button>
+                        </NavLink>
                       </div>
                     </TableCell>
                   </TableRow>

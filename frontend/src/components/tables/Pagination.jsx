@@ -1,3 +1,5 @@
+// src/components/tables/Pagination.jsx
+
 import React from "react";
 
 const Pagination = ({
@@ -22,7 +24,7 @@ const Pagination = ({
   };
 
   return (
-    <div className="w-full max-w-[912px] mx-auto flex justify-between items-center">
+    <div className="w-full mx-auto flex justify-between items-center">
       <div className="text-slate-500 text-xs font-normal">
         Showing {startItem} - {endItem} of {totalItems}.
       </div>

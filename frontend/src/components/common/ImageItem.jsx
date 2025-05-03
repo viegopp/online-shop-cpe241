@@ -33,7 +33,7 @@ const ImageItem = ({
 
   return (
     <div
-      className={`relative overflow-hidden ${getVariantClasses()}`}
+      className={`relative overflow-hidden ${getVariantClasses()} border-slate-800/5 border-1`}
       style={{ width: `${width}px`, height: `${height}px` }}
     >
       <img src={src} alt={alt} className="w-full h-full object-cover" />

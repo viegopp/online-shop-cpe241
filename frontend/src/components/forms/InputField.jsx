@@ -50,7 +50,7 @@ const InputField = ({
               rows={rows}
               disabled={disabled}
               required={required}
-              className="w-full bg-transparent outline-none text-slate-900 py-2 resize-none"
+              className="w-full h-full bg-transparent outline-none text-slate-900 py-2 resize-none"
               {...props}
             />
           ) : (

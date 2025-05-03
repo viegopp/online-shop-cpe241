@@ -16,8 +16,9 @@ const LoginForm = () => {
     rememberMe: false,
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Determine if this is an admin or customer login page
+  // ตรวจสอบว่าเป็นหน้า login ของ admin หรือ customer
   const isAdmin = location.pathname.includes("/admin/");
 
   const handleInputChange = (field) => (e) => {
@@ -25,7 +26,7 @@ const LoginForm = () => {
       ...prev,
       [field]: e.target.value,
     }));
-    setError(""); // Clear error when user types
+    setError(""); // ล้าง error เมื่อผู้ใช้พิมพ์
   };
 
   const handleRememberMeChange = () => {
@@ -35,28 +36,55 @@ const LoginForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    // TODO: Check for "Remember Me" functionality (Optional)
-    const { success, message } = login(formData.email, formData.password);
+    try {
+      // ถ้าเป็นหน้า admin login ให้เรียกใช้ API login
+      if (isAdmin) {
+        const { success, message, role } = await login(
+          formData.email,
+          formData.password
+        );
 
-    if (success) {
-      // Redirect based on user type
-      navigate(isAdmin ? "/admin/homepage" : "/customer/homepage");
-    } else {
-      setError("Invalid username or password");
+        if (success) {
+          // ตรวจสอบว่าผู้ใช้เป็น admin จริงหรือไม่
+          if (
+            role &&
+            (role.toLowerCase() === "admin" ||
+              role.toLowerCase().includes("admin"))
+          ) {
+            navigate("/admin/homepage");
+          } else {
+            setError("You don't have admin privileges");
+          }
+        } else {
+          setError(message || "Login failed");
+        }
+      } else {
+        // สำหรับ customer login (ยังไม่มี API รองรับ)
+        setError("Customer login is not implemented yet");
+        // เมื่อมี API customer login ให้ใช้โค้ดคล้ายกับ admin login
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleForgotPassword = () => {
-    // Mock function for forgot password
+    // สำหรับฟังก์ชั่น forgot password
     console.log("Forgot password clicked");
+    // TODO: เพิ่มการเชื่อมต่อกับ API forgot password เมื่อมี endpoint
+    alert("Forgot password functionality will be implemented soon");
   };
 
   const handleSignUp = () => {
-    // Only customer should be able to sign up
+    // สำหรับ customer เท่านั้น
     navigate("/customer/signup");
   };
 
@@ -101,8 +129,8 @@ const LoginForm = () => {
           </button>
         </div>
 
-        <Button type="submit" className="mt-4">
-          LOGIN
+        <Button type="submit" className="mt-4" disabled={isLoading}>
+          {isLoading ? "LOGGING IN..." : "LOGIN"}
         </Button>
 
         {!isAdmin && (

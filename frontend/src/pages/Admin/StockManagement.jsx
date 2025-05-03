@@ -1,20 +1,22 @@
+// src/pages/Admin/StockManagement.jsx
+
+import React from "react";
 import MainLayout from "../../components/layouts/MainLayout";
 import StockManageTable from "../../components/tables/StockManageTable";
 
-const StackManagementPage = () => {
+const StockManagement = () => {
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Inventory", href: "/inventory" },
-    { label: "Stock Management", href: "/stock-management" },
+    { label: "Stock Management", href: "/admin/inventory/stock" },
   ];
 
   return (
-    <MainLayout breadcrumbs={breadcrumbItems} title="Stock Management">
-      <div className="flex items-center flex-col w-full h-full min-h-[400px]">
+    <MainLayout breadcrumbs={breadcrumbItems}>
+      <div className="w-full max-w-screen-xl mx-auto flex flex-col gap-6">
         <StockManageTable />
       </div>
     </MainLayout>
   );
 };
 
-export default StackManagementPage;
+export default StockManagement;

@@ -40,7 +40,7 @@ class AdminAuthController extends Controller
                 r.role_name
                 FROM admins a
                 JOIN users u ON u.user_id = a.user_id
-                JOIN roles r ON r.role_id = a.role_id
+                LEFT JOIN roles r ON r.role_id = a.role_id
                 WHERE u.email = ? AND u.deleted_at IS NULL
                 LIMIT 1
             ", [$request->email]);

@@ -29,13 +29,22 @@ npm run dev
 # Navigate to backend directory
 cd backend
 
-# DB Configuration in .env file
+# create .env
+copy .env.example .env
+
+#Configuration in .env file
 DB_CONNECTION=mysql
 DB_HOST=localhost
 DB_PORT=3306
 DB_DATABASE=online_shop_cpe241 # replace with your database name
 DB_USERNAME=root # replace with your database server username
 DB_PASSWORD=password # replace with your database server username
+
+CACHE_STORE=file
+SESSION_DRIVER=file
+
+# Set up your own database then,
+php artisan migrate
 
 # Start development server
 php artisan serve

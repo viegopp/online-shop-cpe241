@@ -7,7 +7,7 @@ const Homepage = () => {
   ];
 
   return (
-    <MainLayout breadcrumbs={breadcrumbItems}>
+    <MainLayout breadcrumbs={breadcrumbItems} title="Home">
       <div className="flex justify-center items-center flex-col w-full h-full min-h-[400px]">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 px-4 py-8 opacity-20">

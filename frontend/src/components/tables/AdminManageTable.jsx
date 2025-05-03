@@ -224,7 +224,7 @@ const AdminManageTable = ({ admins = [] }) => {
   };
 
   return (
-    <div className="w-full max-w-[912px] mx-auto flex flex-col gap-2">
+    <div className="w-full mx-auto flex flex-col gap-2">
       <div className="relative" ref={toolbarRef}>
         <TableToolbar
           onSearch={handleSearch}

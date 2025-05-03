@@ -1,3 +1,5 @@
+// src/components/tables/TableToolbar.jsx
+
 import React from "react";
 import { Settings2, Search, Plus } from "lucide-react";
 
@@ -15,7 +17,7 @@ const TableToolbar = ({
   };
 
   return (
-    <div className="w-full max-w-[912px] mx-auto h-6.5 flex justify-between items-center">
+    <div className="w-full mx-auto h-6.5 flex justify-between items-center">
       <div
         className={`flex gap-1.5 h-full ${
           !onAddItem ? "w-full justify-between" : ""

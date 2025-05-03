@@ -10,7 +10,7 @@ const Breadcrumbs = ({ items = [], title = "Dashboard" }) => {
   }
 
   return (
-    <div className="flex justify-between items-center w-full mx-auto my-4">
+    <div className="flex justify-between items-center w-full mx-auto mb-4">
       <h1 className="font-satoshi font-bold text-xl text-slate-900">{title}</h1>
       <nav className="flex items-center gap-2">
         {items.map((item, index) => (
@@ -19,7 +19,7 @@ const Breadcrumbs = ({ items = [], title = "Dashboard" }) => {
               <span className="text-slate-400 font-satoshi text-base">/</span>
             )}
             {index === items.length - 1 ? (
-              <span className="text-slate-600 font-satoshi text-sm font-normal">
+              <span className="text-slate-600 font-satoshi text-sm font-medium">
                 {item.label}
               </span>
             ) : (

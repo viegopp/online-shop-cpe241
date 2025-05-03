@@ -52,7 +52,7 @@ export const SimpleProductDetails = ({ name, id }) => {
 export const ProductCard = ({ product, variant = "default" }) => {
   if (variant === "simple") {
     return (
-      <article className="overflow-hidden rounded-xl border border-solid border-slate-200 max-w-[162px]">
+      <article className="overflow-hidden rounded-xl border border-solid border-slate-200 max-w-[196px]">
         <img
           src={product.imageUrl}
           alt={`Product image of ${product.name}`}
@@ -65,7 +65,7 @@ export const ProductCard = ({ product, variant = "default" }) => {
 
   // Default variant
   return (
-    <article className="border-slate-200 border max-w-40 overflow-hidden rounded-[10px] border-solid hover:shadow-lg transition-shadow duration-200">
+    <article className="border-slate-200 border max-w-44 overflow-hidden rounded-[10px] border-solid hover:shadow-lg hover:shadow-slate-700/5 transition-shadow duration-200 cursor-pointer">
       <ProductImage src={product.imageUrl} alt={product.name} />
       <ProductDetails
         name={product.name}

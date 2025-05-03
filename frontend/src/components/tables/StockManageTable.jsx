@@ -1,5 +1,3 @@
-// src/components/tables/StockManageTable.jsx
-
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Table,
@@ -235,7 +233,7 @@ const StockManageTable = ({ products = [] }) => {
   };
 
   return (
-    <div className="w-full max-w-[912px] mx-auto flex flex-col gap-2">
+    <div className="w-full mx-auto flex flex-col gap-2">
       <div className="relative" ref={toolbarRef}>
         <TableToolbar
           onSearch={handleSearch}

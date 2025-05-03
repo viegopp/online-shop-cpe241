@@ -17,7 +17,7 @@ const ReviewSummary = ({
   };
 
   return (
-    <div className="flex w-full max-w-[700px] h-[272px] p-6 border border-gray-200 rounded-lg bg-white font-satoshi">
+    <div className="flex w-full h-[272px] p-6 border border-gray-200 rounded-lg bg-white font-satoshi">
       <div className="flex flex-col items-center justify-center w-1/3">
         <div className="text-5xl font-black text-slate-700">{rating}</div>
         <div className="mt-4 text-base font-medium text-gray-500">

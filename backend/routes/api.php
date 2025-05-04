@@ -13,24 +13,24 @@ use App\Http\Controllers\Customer\CustomerAuthController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
 
-Route::get('/users', [DataController::class, 'getUsers']);
-Route::get('/roles', [DataController::class, 'getRoles']);
-Route::get('/admins', [DataController::class, 'getAdmins']);
-Route::get('/customers', [DataController::class, 'getCustomers']);
-Route::get('/manufacturers', [DataController::class, 'getManufacturers']);
-Route::get('/categories', [DataController::class, 'getCategories']);
-Route::get('/products', [DataController::class, 'getProducts']);
-Route::get('/product-images', [DataController::class, 'getProductImages']);
-Route::get('/cart-items', [DataController::class, 'getCartItems']);
-Route::get('/order-statuses', [DataController::class, 'getOrderStatuses']);
-Route::get('/payment-methods', [DataController::class, 'getPaymentMethods']);
-Route::get('/payments', [DataController::class, 'getPayments']);
-Route::get('/orders', [DataController::class, 'getOrders']);
-Route::get('/order-items', [DataController::class, 'getOrderItems']);
-Route::get('/reviews', [DataController::class, 'getReviews']);
-Route::get('/promotions', [DataController::class, 'getPromotions']);
-Route::get('/promotion-products', [DataController::class, 'getPromotionProducts']);
-Route::get('/addresses', [DataController::class, 'getAddresses']);
+Route::get('db/users', [DataController::class, 'getUsers']);
+Route::get('db/roles', [DataController::class, 'getRoles']);
+Route::get('db/admins', [DataController::class, 'getAdmins']);
+Route::get('db/customers', [DataController::class, 'getCustomers']);
+Route::get('db/manufacturers', [DataController::class, 'getManufacturers']);
+Route::get('db/categories', [DataController::class, 'getCategories']);
+Route::get('db/products', [DataController::class, 'getProducts']);
+Route::get('db/product-images', [DataController::class, 'getProductImages']);
+Route::get('db/cart-items', [DataController::class, 'getCartItems']);
+Route::get('db/order-statuses', [DataController::class, 'getOrderStatuses']);
+Route::get('db/payment-methods', [DataController::class, 'getPaymentMethods']);
+Route::get('db/payments', [DataController::class, 'getPayments']);
+Route::get('db/orders', [DataController::class, 'getOrders']);
+Route::get('db/order-items', [DataController::class, 'getOrderItems']);
+Route::get('db/reviews', [DataController::class, 'getReviews']);
+Route::get('db/promotions', [DataController::class, 'getPromotions']);
+Route::get('db/promotion-products', [DataController::class, 'getPromotionProducts']);
+Route::get('db/addresses', [DataController::class, 'getAddresses']);
 
 // Admin Routes
 Route::prefix('admin')->group(function () {

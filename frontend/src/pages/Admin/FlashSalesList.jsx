@@ -1,11 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import { Search, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import MainLayout from "@/components/main-layout"
-import FlashSalesTable from "@/components/flash-sales-table"
+import { Button } from "../../components/common/Button"
+import MainLayout from "../../components/layouts/MainLayout"
+import FlashSalesTable from "../../components/tables/FlashSalesTable";
+
 
 function FlashSalesListPage() {
   const [searchQuery, setSearchQuery] = useState("")

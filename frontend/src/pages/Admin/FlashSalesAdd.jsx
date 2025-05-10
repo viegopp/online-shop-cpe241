@@ -1,14 +1,11 @@
-"use client"
-
 import { useState } from "react"
 import { Calendar, Plus, Trash2 } from "lucide-react"
-import MainLayout from "../../components/layouts/MainLayout"
 import FlashSalePopup from "../../components/FlashSalePopup"
 
 const FlashSalesAdd = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [isEditMode, setIsEditMode] = useState(true)
+  //const [isEditMode, setIsEditMode] = useState(true)
   const [currentFlashSale, setCurrentFlashSale] = useState({
     id: "15",
     promotionName: "สุดหล่อมาแย้วววว",
@@ -44,9 +41,6 @@ const FlashSalesAdd = () => {
     setSidebarCollapsed(!sidebarCollapsed)
   }
 
-  const handleOpenPopup = () => {
-    setIsPopupOpen(true)
-  }
 
   const handleClosePopup = () => {
     setIsPopupOpen(false)

@@ -1,10 +1,7 @@
-"use client"
-
 import { useState } from "react"
 import { MoreHorizontal, Trash2 } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHead, TableRow } from "lucide-react"
-import { Button } from "frontend/src/components/common/Button"
-import { Badge } from "frontend/src/components/common/Badge"
+import { Button } from "../../components/common/Button"
+import { Badge } from "../../components/common/Badge"
 
 const FlashSalesTable = ({ initialData = [] }) => {
   const [flashSales, setFlashSales] = useState(initialData)
@@ -109,4 +106,4 @@ const FlashSalesTable = ({ initialData = [] }) => {
   )
 }
 
-export default FlashSalesTable
+export default FlashSalesTable  

@@ -14,9 +14,11 @@ import ProductEditPage from "./pages/Admin/ProductEdit";
 import CustomerManagementPage from "./pages/Admin/CustomerManagement";
 import AdminManagementPage from "./pages/Admin/AdminManagement";
 import AdminProfilePage from "./pages/Admin/AdminProfile";
-
+import FlashSalesList from "./pages/Admin/FlashSalesList";
+import FlashSalesAdd from "./pages/Admin/FlashSalesAdd";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./auth/AuthProvider";
+
 
 const ROUTES = {
   CUSTOMER: [
@@ -52,6 +54,7 @@ const ROUTES = {
     {
       path: "/admin/inventory/stock-management",
       element: (
+        
         <PrivateRoute requiredRole="admin">
           <StackManagementPage />
         </PrivateRoute>
@@ -103,6 +106,12 @@ const ROUTES = {
         <PrivateRoute requiredRole="admin">
           <AdminManagementPage />
         </PrivateRoute>
+      ),
+    },
+    {
+      part: "admin/flash-sales",
+      element: (
+          <FlashSalesListPage />
       ),
     },
     {

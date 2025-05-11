@@ -14,8 +14,8 @@ import ProductEditPage from "./pages/Admin/ProductEdit";
 import CustomerManagementPage from "./pages/Admin/CustomerManagement";
 import AdminManagementPage from "./pages/Admin/AdminManagement";
 import AdminProfilePage from "./pages/Admin/AdminProfile";
-import FlashSalesList from "./pages/Admin/FlashSalesList";
-import FlashSalesAdd from "./pages/Admin/FlashSalesAdd";
+import FlashSalesListPage from "./pages/Admin/FlashSalesList";
+import FlashSalesAdd from "./pages/Admin/FlashSalesAdd";  
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./auth/AuthProvider";
 
@@ -109,9 +109,15 @@ const ROUTES = {
       ),
     },
     {
-      part: "admin/flash-sales",
+      path: "admin/flash-sales",
       element: (
           <FlashSalesListPage />
+      ),
+    },
+    {
+      path: "admin/flash-sales/add",
+      element: (
+          <FlashSalesAdd />
       ),
     },
     {

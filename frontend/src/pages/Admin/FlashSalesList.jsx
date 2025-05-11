@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { Search, Filter } from "lucide-react"
-import { Button } from "../../components/common/Button"
+import Button from "../../components/common/Button"
 import MainLayout from "../../components/layouts/MainLayout"
 import FlashSalesTable from "../../components/tables/FlashSalesTable";
-
+import Input from "../../components/common/Input"
 
 function FlashSalesListPage() {
   const [searchQuery, setSearchQuery] = useState("")

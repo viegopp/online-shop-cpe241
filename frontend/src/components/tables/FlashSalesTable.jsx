@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { MoreHorizontal, Trash2 } from "lucide-react"
-import { Button } from "../../components/common/Button"
-import { Badge } from "../../components/common/Badge"
+import Button from "../../components/common/Button"
+import { Table, TableHeader, TableBody, TableRow, TableCell } from "../../components/tables/TableElements"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../../components/common/Dropdown"
 
 const FlashSalesTable = ({ initialData = [] }) => {
   const [flashSales, setFlashSales] = useState(initialData)
@@ -23,13 +24,13 @@ const FlashSalesTable = ({ initialData = [] }) => {
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
-            <TableHead className="w-[80px] font-semibold">ID</TableHead>
-            <TableHead className="font-semibold">Promotions Name</TableHead>
-            <TableHead className="font-semibold">Status</TableHead>
-            <TableHead className="font-semibold">Start</TableHead>
-            <TableHead className="font-semibold">End</TableHead>
-            <TableHead className="font-semibold">Product</TableHead>
-            <TableHead className="w-[100px] text-right font-semibold">Action</TableHead>
+            <TableCell isHeader className="w-[80px] font-semibold">ID</TableCell>
+            <TableCell isHeader className="font-semibold">Promotions Name</TableCell>
+            <TableCell isHeader className="font-semibold">Status</TableCell>
+            <TableCell isHeader className="font-semibold">Start</TableCell>
+            <TableCell isHeader className="font-semibold">End</TableCell>
+            <TableCell isHeader className="font-semibold">Product</TableCell>
+            <TableCell isHeader className="w-[100px] text-right font-semibold">Action</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -38,18 +39,23 @@ const FlashSalesTable = ({ initialData = [] }) => {
               <TableCell className="font-medium">{sale.id}</TableCell>
               <TableCell>{sale.promotionName}</TableCell>
               <TableCell>
-                <Badge
-                  variant={sale.status === "Active" ? "success" : "destructive"}
+                <div
                   className={`
+                    inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
                     ${
                       sale.status === "Active"
-                        ? "bg-green-100 text-green-600 hover:bg-green-100 hover:text-green-600"
-                        : "bg-red-100 text-red-600 hover:bg-red-100 hover:text-red-600"
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
+                    }
+                    ${
+                      sale.status === "Active"
+                        ? "hover:bg-green-100 hover:text-green-600"
+                        : "hover:bg-red-100 hover:text-red-600"
                     }
                   `}
                 >
                   {sale.status}
-                </Badge>
+                </div>
               </TableCell>
               <TableCell>{formatDate(sale.startDate)}</TableCell>
               <TableCell>{formatDate(sale.endDate)}</TableCell>
@@ -74,19 +80,10 @@ const FlashSalesTable = ({ initialData = [] }) => {
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end space-x-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>View details</DropdownMenuItem>
-                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Button variant="ghost" size="icon">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -106,4 +103,4 @@ const FlashSalesTable = ({ initialData = [] }) => {
   )
 }
 
-export default FlashSalesTable  
+export default FlashSalesTable

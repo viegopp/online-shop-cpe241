@@ -68,8 +68,9 @@ CREATE TABLE products (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (created_by) REFERENCES admins(admin_id),
-    FOREIGN KEY (updated_by) REFERENCES admins(admin_id)
+    deleted_at TIMESTAMP NULL,
+    FOREIGN KEY (created_by) REFERENCES admins(admin_id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES admins(admin_id) ON DELETE SET NULL
 );
 
 CREATE TABLE product_images (
@@ -152,7 +153,7 @@ CREATE TABLE reviews (
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     replied_by INT,
-    FOREIGN KEY (replied_by) REFERENCES admins(admin_id)
+    FOREIGN KEY (replied_by) REFERENCES admins(admin_id) ON DELETE SET NULL
 );
 
 -- ========== PROMOTIONS ==========
@@ -171,8 +172,8 @@ CREATE TABLE promotions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (created_by) REFERENCES admins(admin_id),
-    FOREIGN KEY (updated_by) REFERENCES admins(admin_id)
+    FOREIGN KEY (created_by) REFERENCES admins(admin_id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES admins(admin_id) ON DELETE SET NULL
 );
 
 CREATE TABLE promotion_products (

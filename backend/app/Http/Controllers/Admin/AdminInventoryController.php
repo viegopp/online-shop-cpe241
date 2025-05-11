@@ -92,6 +92,7 @@ class AdminInventoryController extends Controller
                 FROM products p
                 " . ($requiresCategoryJoin ? "LEFT JOIN categories c ON p.category_id = c.category_id" : "") . "
                 WHERE 1=1 $filters
+                AND p.deleted_at IS NULL
             ";
 
             $totalResult = DB::select($countSql, $params);
@@ -119,6 +120,7 @@ class AdminInventoryController extends Controller
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.category_id
                 WHERE 1=1 $filters
+                AND p.deleted_at IS NULL
                 ORDER BY p.updated_at DESC
                 LIMIT ? OFFSET ?
             ";
@@ -163,6 +165,7 @@ class AdminInventoryController extends Controller
                 LEFT JOIN categories c ON p.category_id = c.category_id
                 LEFT JOIN product_images pi ON pi.product_id = p.product_id
                 WHERE p.product_id = ?
+                AND p.deleted_at IS NULL
                 GROUP BY 
                     p.product_id,
                     p.name,
@@ -357,7 +360,7 @@ class AdminInventoryController extends Controller
             }
 
             // Ensure product exists
-            $exists = DB::selectOne("SELECT product_id FROM products WHERE product_id = ?", [$product_id]);
+            $exists = DB::selectOne("SELECT product_id FROM products WHERE product_id = ? AND deleted_at IS NULL", [$product_id]);
             if (!$exists) {
                 DB::statement("ROLLBACK");
                 return response()->json([
@@ -427,20 +430,20 @@ class AdminInventoryController extends Controller
     public function deleteProductByID($product_id)
     {
         try {
-            $product = DB::selectOne("SELECT product_id FROM products WHERE product_id = ?", [$product_id]);
-
+            $product = DB::selectOne("SELECT product_id FROM products WHERE product_id = ? AND deleted_at IS NULL", [$product_id]);
+    
             if (!$product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Product not found.'
+                    'message' => 'Product not found or already deleted.'
                 ], 404);
             }
-
-            DB::delete("DELETE FROM products WHERE product_id = ?", [$product_id]);
-
+    
+            DB::update("UPDATE products SET deleted_at = NOW() WHERE product_id = ?", [$product_id]);
+    
             return response()->json([
                 'success' => true,
-                'message' => "Product {$product_id} deleted successfully."
+                'message' => "Product {$product_id} soft-deleted successfully."
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -449,5 +452,5 @@ class AdminInventoryController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
+    }    
 }

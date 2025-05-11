@@ -73,7 +73,7 @@ class AdminAnalyticController extends Controller
                 GROUP BY sale_month
                 ORDER BY sale_month
             ");
-
+    
             // Product Performance
             $productPerformance = DB::select("
                 SELECT 
@@ -89,7 +89,7 @@ class AdminAnalyticController extends Controller
                 ORDER BY percentage_of_total_sale DESC
                 LIMIT 5
             ");
-
+    
             // Latest Reviews
             $latestReviews = DB::select("
                 SELECT 
@@ -104,7 +104,7 @@ class AdminAnalyticController extends Controller
                 ORDER BY r.created_at DESC
                 LIMIT 3
             ");
-
+    
             // Category Sales
             $categorySales = DB::select("
                 SELECT 
@@ -121,8 +121,110 @@ class AdminAnalyticController extends Controller
                 GROUP BY c.category_id
                 ORDER BY percentage_of_total_sale DESC
             ");
-
-            // Return all data
+    
+            // Top Selling Product per Category
+            $topSellingPerCategory = DB::select("
+                SELECT 
+                    c.category_name,
+                    p.product_id,
+                    p.name AS product_name,
+                    (
+                        SELECT pi.image_path
+                        FROM product_images pi
+                        WHERE pi.product_id = p.product_id
+                        ORDER BY pi.image_id ASC
+                        LIMIT 1
+                    ) AS image,
+                    SUM(oi.quantity) AS total_sold
+                FROM categories c
+                JOIN products p ON c.category_id = p.category_id
+                JOIN order_items oi ON p.product_id = oi.product_id
+                JOIN orders o ON oi.order_id = o.order_id
+                WHERE o.status_code != 1
+                AND p.deleted_at IS NULL
+                GROUP BY c.category_id, p.product_id
+                HAVING total_sold = (
+                    SELECT MAX(sub.total_qty)
+                    FROM (
+                        SELECT SUM(oi2.quantity) AS total_qty
+                        FROM products p2
+                        JOIN order_items oi2 ON p2.product_id = oi2.product_id
+                        JOIN orders o2 ON oi2.order_id = o2.order_id
+                        WHERE p2.category_id = c.category_id
+                        AND o2.status_code != 1
+                        AND p2.deleted_at IS NULL
+                        GROUP BY p2.product_id
+                    ) AS sub
+                )
+                ORDER BY c.category_name
+            ");
+    
+            // Customers with Highest Order Count & Total Spent
+            $topCustomers = DB::select("
+                SELECT 
+                    u.user_id,
+                    CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+                    u.email,
+                    (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id) AS total_orders,
+                    (
+                        SELECT SUM(p.total_amount)
+                        FROM orders o
+                        JOIN payments p ON o.payment_id = p.payment_id
+                        WHERE o.customer_id = c.customer_id
+                        AND o.status_code != 1
+                    ) AS total_spent
+                FROM customers c
+                JOIN users u ON c.user_id = u.user_id
+                ORDER BY total_orders DESC, total_spent DESC
+                LIMIT 5
+            ");
+    
+            // Revenue Loss from Discounted Promotions
+            $promotionLoss = DB::select("
+                SELECT 
+                    pr.promotion_id,
+                    pr.name,
+                    pr.discount_percent,
+                    COUNT(pp.product_id) AS total_products,
+                    (
+                        SELECT SUM(p.price * pr.discount_percent / 100)
+                        FROM promotion_products pp2
+                        JOIN products p ON pp2.product_id = p.product_id
+                        WHERE pp2.promotion_id = pr.promotion_id
+                        AND p.deleted_at IS NULL
+                    ) AS estimated_discount_loss
+                FROM promotions pr
+                LEFT JOIN promotion_products pp ON pr.promotion_id = pp.promotion_id
+                GROUP BY pr.promotion_id
+                ORDER BY estimated_discount_loss DESC
+                LIMIT 5
+            ");
+    
+            // Review Summary per Product
+            $reviewSummary = DB::select("
+                SELECT 
+                    p.product_id,
+                    p.name,
+                    COUNT(r.review_id) AS total_reviews,
+                    ROUND(AVG(r.rating), 1) AS avg_rating,
+                    (
+                        SELECT COUNT(*)
+                        FROM reviews r2
+                        WHERE r2.product_id = p.product_id AND r2.rating = 5
+                    ) AS five_star_count,
+                    (
+                        SELECT ROUND(100 * COUNT(*) / NULLIF(COUNT(*), 0), 1)
+                        FROM reviews r3
+                        WHERE r3.product_id = p.product_id AND r3.rating = 5
+                    ) AS five_star_percentage
+                FROM products p
+                LEFT JOIN reviews r ON r.product_id = p.product_id
+                WHERE p.deleted_at IS NULL
+                GROUP BY p.product_id
+                ORDER BY avg_rating DESC
+                LIMIT 3
+            ");
+    
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -130,6 +232,10 @@ class AdminAnalyticController extends Controller
                     'product_performance' => $productPerformance,
                     'latest_reviews' => $latestReviews,
                     'category_sales' => $categorySales,
+                    'top_selling_per_category' => $topSellingPerCategory,
+                    'top_customers' => $topCustomers,
+                    'promotion_loss' => $promotionLoss,
+                    'review_summary' => $reviewSummary,
                 ]
             ]);
         } catch (\Exception $e) {
@@ -139,5 +245,5 @@ class AdminAnalyticController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
+    }    
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminReviewsController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminManageCustomerController;
 use App\Http\Controllers\Admin\AdminManageAdminsController;
+use App\Http\Controllers\Admin\AdminFlashSaleController;
 use App\Http\Controllers\Admin\AdminProfileController;
 
 
@@ -78,6 +79,12 @@ Route::middleware([Cors::class])->group(function () {
 
             Route::get('profile', [AdminProfileController::class, 'getProfile']);
             Route::put('profile', [AdminProfileController::class, 'updateProfile']);
+
+            Route::get('promotion', [AdminFlashSaleController::class, 'getFlashSaleBy']);
+            Route::get('promotion/{promotion_id}', [AdminFlashSaleController::class, 'getFlashSaleByID']);
+            Route::patch('promotion/{promotion_id}', [AdminFlashSaleController::class, 'updateFlashSaleByID']);
+            Route::delete('promotion/{promotion_id}', [AdminFlashSaleController::class, 'deleteFlashSaleByID']);
+            Route::get('promotion/add/{product_id}', [AdminFlashSaleController::class, 'getProductDetailByID']);
 
             Route::post('logout', [LogoutController::class, 'AdminLogout']);
 

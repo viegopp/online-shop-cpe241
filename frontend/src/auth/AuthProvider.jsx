@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
         // เก็บข้อมูลใน cookies
         Cookies.set("auth_token", token, { expires: 1 }); // หมดอายุใน 1 วัน
         Cookies.set("user_data", JSON.stringify(userData), { expires: 1 });
-
+        console.log("User data:", userData);
         setUser(userData);
         return {
           success: true,

@@ -36,7 +36,7 @@ const ROUTES = {
     {
       path: "/admin/homepage",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <HomepageAdmin />
         </PrivateRoute>
       ),
@@ -44,7 +44,7 @@ const ROUTES = {
     {
       path: "/admin/dashboard",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <DashboardPage />
         </PrivateRoute>
       ),
@@ -52,7 +52,7 @@ const ROUTES = {
     {
       path: "/admin/inventory/stock-management",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <StackManagementPage />
         </PrivateRoute>
       ),
@@ -60,7 +60,7 @@ const ROUTES = {
     {
       path: "/admin/inventory/stock-management/:productId",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <ProductEditPage />
         </PrivateRoute>
       ),
@@ -68,7 +68,7 @@ const ROUTES = {
     {
       path: "/admin/inventory/products-reviews",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <ProductReviewLandingPage />
         </PrivateRoute>
       ),
@@ -76,7 +76,7 @@ const ROUTES = {
     {
       path: "/admin/inventory/products-reviews/:productId",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <ProductReviewDetailPage />
         </PrivateRoute>
       ),
@@ -84,7 +84,7 @@ const ROUTES = {
     {
       path: "admin/orders/track",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <TrackOrderPage />
         </PrivateRoute>
       ),
@@ -92,7 +92,7 @@ const ROUTES = {
     {
       path: "admin/user/customers",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <CustomerManagementPage />
         </PrivateRoute>
       ),
@@ -100,7 +100,7 @@ const ROUTES = {
     {
       path: "admin/user/admins",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <AdminManagementPage />
         </PrivateRoute>
       ),
@@ -108,7 +108,7 @@ const ROUTES = {
     {
       path: "admin/user/admins/:adminId",
       element: (
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute requiredRole="Super Admin">
           <AdminProfilePage />
         </PrivateRoute>
       ),

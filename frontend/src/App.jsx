@@ -38,17 +38,17 @@ const ROUTES = {
     {
       path: "/admin/homepage",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <HomepageAdmin />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "/admin/dashboard",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <DashboardPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
@@ -56,54 +56,58 @@ const ROUTES = {
       element: (
         
         <PrivateRoute requiredRole="admin">
+=======
+        
+        // <PrivateRoute requiredRole="admin">
+>>>>>>> Stashed changes
           <StackManagementPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "/admin/inventory/stock-management/:productId",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <ProductEditPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "/admin/inventory/products-reviews",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <ProductReviewLandingPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "/admin/inventory/products-reviews/:productId",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <ProductReviewDetailPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "admin/orders/track",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <TrackOrderPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "admin/user/customers",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <CustomerManagementPage />
-        </PrivateRoute>
+        // </PrivateRoute>
       ),
     },
     {
       path: "admin/user/admins",
       element: (
-        <PrivateRoute requiredRole="admin">
+        // <PrivateRoute requiredRole="admin">
           <AdminManagementPage />
         </PrivateRoute>
       ),
@@ -121,11 +125,12 @@ const ROUTES = {
       ),
     },
     {
+>>>>>>> Stashed changes
       path: "admin/user/admins/:adminId",
       element: (
-        <PrivateRoute requiredRole="admin">
+        //<PrivateRoute requiredRole="admin">
           <AdminProfilePage />
-        </PrivateRoute>
+        //</PrivateRoute>
       ),
     },
   ],

@@ -39,7 +39,7 @@ class AdminReviewsController extends Controller
                 ], 422);
             }
 
-            $filters = "";
+            $filters = " AND p.deleted_at IS NULL";
             $params = [];
             $requiresCategoryJoin = false;
 
@@ -165,7 +165,7 @@ class AdminReviewsController extends Controller
                     COUNT(CASE WHEN r.rating = 5 THEN 1 END) AS rating_5
                 FROM products p
                 LEFT JOIN reviews r ON p.product_id = r.product_id
-                WHERE p.product_id = ?
+                WHERE p.product_id = ? AND p.deleted_at IS NULL
                 GROUP BY p.product_id
             ", [$product_id]);
 
@@ -191,7 +191,7 @@ class AdminReviewsController extends Controller
                 WHERE r.product_id = ?
                 ORDER BY r.created_at DESC
                 LIMIT ? OFFSET ?
-            ", [$product_id, $perPage, $offset]);        
+            ", [$product_id, $perPage, $offset]);
 
             return response()->json([
                 'success' => true,
@@ -226,7 +226,7 @@ class AdminReviewsController extends Controller
         }
     }
 
-    public function replyComment(Request $request, $review_id)
+    public function replyCommentByID(Request $request, $review_id)
     {
         try {
             $token = $request->bearerToken();
@@ -275,4 +275,31 @@ class AdminReviewsController extends Controller
             ], 500);
         }
     }
+
+    public function deleteCommentByID($review_id)
+    {
+        try {
+            $review = DB::selectOne("SELECT review_id FROM reviews WHERE review_id = ?", [$review_id]);
+    
+            if (!$review) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Review not found.'
+                ], 404);
+            }
+    
+            DB::delete("DELETE FROM reviews WHERE review_id = ?", [$review_id]);
+    
+            return response()->json([
+                'success' => true,
+                'message' => "Review {$review_id} deleted successfully."
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }    
 }

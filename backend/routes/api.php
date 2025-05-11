@@ -30,7 +30,7 @@ use App\Http\Controllers\DataController;
 |
 */
 
-Route::middleware([ Cors::class ])->group(function () {
+Route::middleware([Cors::class])->group(function () {
 
     // --- DataController (db/*) routes ---
     Route::get('db/users',              [DataController::class, 'getUsers']);
@@ -62,34 +62,35 @@ Route::middleware([ Cors::class ])->group(function () {
             Route::get('inventory',               [AdminInventoryController::class, 'getProductDetailBy']);
             Route::get('inventory/{product_id}',  [AdminInventoryController::class, 'getProductDetailByID']);
             Route::post('inventory',              [AdminInventoryController::class, 'createProduct']);
-            Route::patch('inventory/{product_id}',[AdminInventoryController::class, 'updateProductDetailByID']);
-            Route::delete('inventory/{product_id}',[AdminInventoryController::class, 'deleteProductByID']);
+            Route::patch('inventory/{product_id}', [AdminInventoryController::class, 'updateProductDetailByID']);
+            Route::delete('inventory/{product_id}', [AdminInventoryController::class, 'deleteProductByID']);
 
-        Route::get('review', [AdminReviewsController::class, 'getProductCardBy']);
-        Route::get('review/{product_id}', [AdminReviewsController::class, 'getProductReviewByID']);
-        Route::put('review/{review_id}', [AdminReviewsController::class, 'replyComment']);
+            Route::get('review', [AdminReviewsController::class, 'getProductCardBy']);
+            Route::get('review/{product_id}', [AdminReviewsController::class, 'getProductReviewByID']);
+            Route::put('review/{review_id}', [AdminReviewsController::class, 'replyCommentByID']);
+            Route::delete('review/{review_id}', [AdminReviewsController::class, 'deleteCommentByID']);
 
-        Route::get('order', [AdminOrderController::class, 'getOrderDetailBy']);
-        Route::get('order/{order_id}', [AdminOrderController::class, 'getOrderDetailByID']);
+            Route::get('order', [AdminOrderController::class, 'getOrderDetailBy']);
+            Route::get('order/{order_id}', [AdminOrderController::class, 'getOrderDetailByID']);
 
-        Route::get('customer', [AdminManageCustomerController::class, 'getCustomerListBy']);
-        Route::delete('customer/{customer_id}', [AdminManageCustomerController::class, 'deleteCustomerByID']);
-        
-        Route::get('profile', [AdminProfileController::class, 'getProfile']);
-        Route::put('profile', [AdminProfileController::class, 'updateProfile']);
+            Route::get('customer', [AdminManageCustomerController::class, 'getCustomerListBy']);
+            Route::delete('customer/{customer_id}', [AdminManageCustomerController::class, 'deleteCustomerByID']);
 
-        Route::post('logout', [LogoutController::class, 'AdminLogout']);
-        
-        Route::middleware('role:Super Admin')->group(function () {
-            // Admin Home Page
-            Route::get('manage', [AdminManageAdminsController::class, 'getAdminListBy']);
-            Route::delete('manage/{admin_id}', [AdminManageAdminsController::class, 'deleteAdminByID']);
+            Route::get('profile', [AdminProfileController::class, 'getProfile']);
+            Route::put('profile', [AdminProfileController::class, 'updateProfile']);
 
-            Route::get('dashboard', [AdminAnalyticController::class, 'getDashboardData']);
-            Route::get('report', [AdminAnalyticController::class, 'getReportData']);
+            Route::post('logout', [LogoutController::class, 'AdminLogout']);
+
+            Route::middleware('role:Super Admin')->group(function () {
+                // Admin Home Page
+                Route::get('manage', [AdminManageAdminsController::class, 'getAdminListBy']);
+                Route::delete('manage/{admin_id}', [AdminManageAdminsController::class, 'deleteAdminByID']);
+
+                Route::get('dashboard', [AdminAnalyticController::class, 'getDashboardData']);
+                Route::get('report', [AdminAnalyticController::class, 'getReportData']);
+            });
         });
     });
-});
 
     // --- Customer Routes ---
     Route::prefix('customer')->group(function () {

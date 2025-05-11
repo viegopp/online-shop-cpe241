@@ -1,5 +1,5 @@
 <?php
-// not done yet
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -131,24 +131,24 @@ class AdminOrderController extends Controller
                     CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
                     u.email,
                     u.phone_number AS phone,
-
+    
                     a.address_text AS address,
                     a.postal_code AS zip_code,
                     a.district,
                     a.province,
-
+    
                     DATE_FORMAT(o.order_date, '%b %d, %Y %H:%i') AS order_date,
                     DATE_FORMAT(p.payment_date, '%b %d, %Y %H:%i') AS payment_date,
                     pm.method_name AS payment_method,
                     os.status_description AS order_status
-
+    
                 FROM orders o
-                LEFT JOIN customers c ON o.customer_id = c.customer_id
-                LEFT JOIN users u ON c.user_id = u.user_id
-                LEFT JOIN addresses a ON c.customer_id = a.customer_id AND a.is_default = 1
-                LEFT JOIN payments p ON o.payment_id = p.payment_id
-                LEFT JOIN payment_methods pm ON p.payment_method_id = pm.payment_method_id
-                LEFT JOIN order_statuses os ON o.status_code = os.status_code
+                LEFT JOIN customers AS c ON o.customer_id = c.customer_id
+                LEFT JOIN users AS u ON c.user_id = u.user_id
+                LEFT JOIN addresses AS a ON c.customer_id = a.customer_id AND a.is_default = 1
+                LEFT JOIN payments AS p ON o.payment_id = p.payment_id
+                LEFT JOIN payment_methods AS pm ON p.payment_method_id = pm.payment_method_id
+                LEFT JOIN order_statuses AS os ON o.status_code = os.status_code
                 WHERE o.order_id = ?
             ", [$order_id]);
 
@@ -161,24 +161,50 @@ class AdminOrderController extends Controller
 
             // 2. Get items with calculations
             $items = DB::select("SELECT 
-                    oi.product_id,
-                    p.name AS product_name,
-                    p.price AS unit_price,
-                    oi.quantity,
-                    COALESCE(pm.discount_percent, 0) AS discount,
-                    ROUND(p.price * oi.quantity * (1 - COALESCE(pm.discount_percent, 0) / 100), 2) AS total
-                FROM order_items AS oi
-                LEFT JOIN products AS p ON oi.product_id = p.product_id
-                LEFT JOIN promotion_products AS pp ON p.product_id = pp.product_id
-                LEFT JOIN promotions AS pm ON pp.promotion_id = pm.promotion_id
-                WHERE oi.order_id = ?
+                oi.product_id,
+                p.name AS product_name,
+                p.price AS unit_price,
+                oi.quantity,
+                ROUND(p.price * oi.quantity, 2) AS total
+            FROM order_items AS oi
+            LEFT JOIN products AS p ON oi.product_id = p.product_id
+            WHERE oi.order_id = ?
             ", [$order_id]);
-        
+
+            // 3. Get summary
+            $summary = DB::selectOne("SELECT
+                    ROUND(SUM(p.price * oi.quantity), 2) AS subtotal,
+                    ROUND(SUM(p.price * oi.quantity) - (
+                        SELECT pay2.total_amount
+                        FROM orders o2
+                        JOIN payments pay2 ON o2.payment_id = pay2.payment_id
+                        WHERE o2.order_id = ?
+                        LIMIT 1
+                    ), 2) AS discount,
+                    0.00 AS shipping_fee,
+                    (
+                        SELECT ROUND(pay2.total_amount, 2)
+                        FROM orders o2
+                        JOIN payments pay2 ON o2.payment_id = pay2.payment_id
+                        WHERE o2.order_id = ?
+                        LIMIT 1
+                    ) AS total
+                FROM order_items oi
+                JOIN products p ON oi.product_id = p.product_id
+                WHERE oi.order_id = ?
+            ", [$order_id, $order_id, $order_id]);
+
 
             return response()->json([
                 'success' => true,
                 'order' => $order,
                 'items' => $items,
+                'summary' => [
+                    'subtotal' => number_format($summary->subtotal, 2),
+                    'discount' => number_format($summary->discount, 2),
+                    'shipping_fee' => number_format($summary->shipping_fee, 2),
+                    'total' => number_format($summary->total, 2),
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([

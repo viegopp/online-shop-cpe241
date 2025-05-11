@@ -7,7 +7,12 @@ use App\Http\Middleware\Cors;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminAnalyticController;
 use App\Http\Controllers\Admin\AdminInventoryController;
-use App\Http\Controllers\Admin\AdminReviewsContrlloer;
+use App\Http\Controllers\Admin\AdminReviewsController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminManageCustomerController;
+use App\Http\Controllers\Admin\AdminManageAdminsController;
+use App\Http\Controllers\Admin\AdminProfileController;
+
 
 use App\Http\Controllers\Customer\CustomerAuthController;
 
@@ -60,19 +65,31 @@ Route::middleware([ Cors::class ])->group(function () {
             Route::patch('inventory/{product_id}',[AdminInventoryController::class, 'updateProductDetailByID']);
             Route::delete('inventory/{product_id}',[AdminInventoryController::class, 'deleteProductByID']);
 
-            Route::get('review',                  [AdminReviewsContrlloer::class, 'getProductCardBy']);
-            Route::get('review/{product_id}',     [AdminReviewsContrlloer::class, 'getProductReviewByID']);
-            Route::put('review/{review_id}',      [AdminReviewsContrlloer::class, 'replyComment']);
+        Route::get('review', [AdminReviewsController::class, 'getProductCardBy']);
+        Route::get('review/{product_id}', [AdminReviewsController::class, 'getProductReviewByID']);
+        Route::put('review/{review_id}', [AdminReviewsController::class, 'replyComment']);
 
-            Route::post('logout',                 [LogoutController::class, 'AdminLogout']);
+        Route::get('order', [AdminOrderController::class, 'getOrderDetailBy']);
+        Route::get('order/{order_id}', [AdminOrderController::class, 'getOrderDetailByID']);
 
-            // Super Admin only
-            Route::middleware('role:Super Admin')->group(function () {
-                Route::get('dashboard', [AdminAnalyticController::class, 'getDashboardData']);
-                Route::get('report',    [AdminAnalyticController::class, 'getReportData']);
-            });
+        Route::get('customer', [AdminManageCustomerController::class, 'getCustomerListBy']);
+        Route::delete('customer/{customer_id}', [AdminManageCustomerController::class, 'deleteCustomerByID']);
+        
+        Route::get('profile', [AdminProfileController::class, 'getProfile']);
+        Route::put('profile', [AdminProfileController::class, 'updateProfile']);
+
+        Route::post('logout', [LogoutController::class, 'AdminLogout']);
+        
+        Route::middleware('role:Super Admin')->group(function () {
+            // Admin Home Page
+            Route::get('manage', [AdminManageAdminsController::class, 'getAdminListBy']);
+            Route::delete('manage/{admin_id}', [AdminManageAdminsController::class, 'deleteAdminByID']);
+
+            Route::get('dashboard', [AdminAnalyticController::class, 'getDashboardData']);
+            Route::get('report', [AdminAnalyticController::class, 'getReportData']);
         });
     });
+});
 
     // --- Customer Routes ---
     Route::prefix('customer')->group(function () {

@@ -162,6 +162,7 @@ CREATE TABLE promotions (
     name VARCHAR(50) NOT NULL,
     release_date DATETIME NOT NULL,
     expiry_date DATETIME NOT NULL,
+    is_available BOOLEAN NOT NULL DEFAULT FALSE,
     banner_path VARCHAR(2048),
     discount_percent INT NOT NULL CHECK (discount_percent >= 0 AND discount_percent <= 100),
     CONSTRAINT chk_promotion_dates CHECK (release_date < expiry_date),

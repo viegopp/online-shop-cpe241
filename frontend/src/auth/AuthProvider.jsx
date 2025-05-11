@@ -1,6 +1,7 @@
+// src/auth/AuthProvider.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import apiClient from "../api/AxiosInterceptor"; // ใช้ apiClient แทน axios โดยตรง
+import apiClient from "../api/AxiosInterceptor";
 
 const AuthContext = createContext();
 

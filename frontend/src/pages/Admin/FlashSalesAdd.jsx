@@ -5,73 +5,65 @@ import FlashSalePopup from "../../components/FlashSalePopup"
 
 const FlashSalesAdd = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
-
   const [currentFlashSale, setCurrentFlashSale] = useState({
     id: "15",
     promotionName: "สุดหล่อมาแย้วววว",
-    discountPercent: "30",
-    period: "Mar 16, 2050 00:00:00 AM - Mar 31, 2050 23:59:59 PM",
-    status: false,
+    discountPercent: 20,
+    period: "2024-06-01 to 2024-06-10",
+    status: true,
     products: [
       {
-        id: "000001",
-        image: "/placeholder.svg?height=80&width=40",
-        name: "เพียวริคุมิกซ์เบอร์รี่",
-        price: 15.0,
-        promotionPrice: 10.5,
+        id: "P001",
+        name: "Product 1",
+        price: 100,
+        promotionPrice: 80,
+        image: "",
       },
       {
-        id: "000002",
-        image: "/placeholder.svg?height=80&width=40",
-        name: "เพียวริคุกล้วย",
-        price: 20.0,
-        promotionPrice: 14,
-      },
-      {
-        id: "000003",
-        image: "/placeholder.svg?height=80&width=40",
-        name: "เพียวริคุลาบ",
-        price: 99.5,
-        promotionPrice: 69.65,
+        id: "P002",
+        name: "Product 2",
+        price: 200,
+        promotionPrice: 160,
+        image: "",
       },
     ],
   })
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setCurrentFlashSale((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleToggleStatus = () => {
+    setCurrentFlashSale((prev) => ({
+      ...prev,
+      status: !prev.status,
+    }))
+  }
+
+  const handleRemoveProduct = (index) => {
+    setCurrentFlashSale((prev) => ({
+      ...prev,
+      products: prev.products.filter((_, i) => i !== index),
+    }))
+  }
+
+  const handleAddProduct = () => {
+    // This would typically open another modal to select products
+    alert("Add product functionality would be implemented here")
+  }
 
   const handleClosePopup = () => {
     setIsPopupOpen(false)
   }
 
-  const handleSaveFlashSale = (flashSale) => {
-    setCurrentFlashSale(flashSale)
+  const handleSaveFlashSale = () => {
+    // Save logic here
     setIsPopupOpen(false)
-  }
-
-  const handleRemoveProduct = (index) => {
-    const updatedProducts = [...currentFlashSale.products]
-    updatedProducts.splice(index, 1)
-    setCurrentFlashSale({
-      ...currentFlashSale,
-      products: updatedProducts,
-    })
-  }
-
-  const handleAddProduct = () => {
-    alert("Add product functionality would be implemented here")
-  }
-
-  const handleToggleStatus = () => {
-    setCurrentFlashSale({
-      ...currentFlashSale,
-      status: !currentFlashSale.status,
-    })
-  }
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setCurrentFlashSale({
-      ...currentFlashSale,
-      [name]: value,
-    })
+    alert("Flash sale saved!")
   }
 
   const breadcrumbItems = [
@@ -97,7 +89,6 @@ const FlashSalesAdd = () => {
                 className="w-full p-2 border rounded-md"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Promotions Name</label>
               <input
@@ -108,7 +99,6 @@ const FlashSalesAdd = () => {
                 className="w-full p-2 border rounded-md"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Discount percent</label>
               <div className="relative">
@@ -122,7 +112,6 @@ const FlashSalesAdd = () => {
                 <span className="absolute right-3 top-2 text-gray-500">%</span>
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Period</label>
               <div className="relative">
@@ -140,7 +129,6 @@ const FlashSalesAdd = () => {
               </div>
             </div>
           </div>
-
           {/* Status Toggle */}
           <div className="flex justify-between items-center mb-6">
             <div className="text-sm font-medium text-gray-700">Status</div>
@@ -157,7 +145,6 @@ const FlashSalesAdd = () => {
               </span>
             </label>
           </div>
-
           {/* Products Table */}
           <div className="mb-6">
             <h3 className="text-lg font-medium mb-4">Items in this promotion</h3>
@@ -215,7 +202,6 @@ const FlashSalesAdd = () => {
               </table>
             </div>
           </div>
-
           {/* Footer Buttons */}
           <div className="flex justify-between items-center">
             <button
@@ -224,7 +210,6 @@ const FlashSalesAdd = () => {
             >
               <Plus size={16} className="mr-2" /> Add Product
             </button>
-
             <div className="space-x-2">
               <button
                 onClick={() => window.history.back()}
@@ -242,7 +227,6 @@ const FlashSalesAdd = () => {
           </div>
         </div>
       </div>
-
       {/* Flash Sale Popup */}
       <FlashSalePopup isOpen={isPopupOpen} onClose={handleClosePopup} onSave={handleSaveFlashSale} />
     </MainLayout>

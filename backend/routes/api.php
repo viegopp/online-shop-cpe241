@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminProfileController;
 
 
 use App\Http\Controllers\Customer\CustomerAuthController;
+use App\Http\Controllers\Customer\CustomerHomePageController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -103,6 +104,9 @@ Route::middleware([Cors::class])->group(function () {
     Route::prefix('customer')->group(function () {
         Route::post('register', [CustomerAuthController::class, 'register']);
         Route::post('login',    [CustomerAuthController::class, 'login']);
+        Route::get('homepage/promotions/hero', [CustomerHomePageController::class, 'getHeroPromotions']);
+        Route::get('homepage/products/hot', [CustomerHomePageController::class, 'getHotProducts']);
+        Route::get('homepage/products/flashsales', [CustomerHomePageController::class, 'getFlashSales']);
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

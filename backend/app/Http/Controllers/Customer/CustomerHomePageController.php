@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CustomerFlashSaleController extends Controller
+class CustomerHomePageController extends Controller
 {
     // Hero Section: Active promotions with banners
     public function getHeroPromotions()

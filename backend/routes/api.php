@@ -24,6 +24,7 @@ use App\Http\Controllers\Customer\CustomerFlashSalePageController;
 use App\Http\Controllers\Customer\CustomerProfileManagementController;
 use App\Http\Controllers\Customer\CustomerCheckoutPageController;
 use App\Http\Controllers\Customer\CustomerConfirmationPageController;
+use App\Http\Controllers\Customer\CustomerMyOrderPageController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -134,7 +135,7 @@ Route::middleware([Cors::class])->group(function () {
         Route::get('checkout/{customer_id}', [CustomerCheckoutPageController::class, 'getCheckoutInfo']);
         Route::post('checkout/placeorder', [CustomerCheckoutPageController::class, 'placeOrder']);
         Route::get('confirmation/{order_id}', [CustomerConfirmationPageController::class, 'getConfirmationInfo']);
-
+        Route::get('{customer_id}/orders', [CustomerMyOrderPageController::class, 'getCustomerOrders']);
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

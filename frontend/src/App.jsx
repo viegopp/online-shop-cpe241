@@ -16,7 +16,7 @@ import AdminManagementPage from "./pages/Admin/AdminManagement";
 import AdminProfilePage from "./pages/Admin/AdminProfile";
 import FlashSalesListPage from "./pages/Admin/FlashSalesList";
 import FlashSalesAddPage from "./pages/Admin/FlashSalesAdd";
-import PrivateRoute from "./components/PrivateRoute";
+import ReportPage from "./pages/Admin/Report";
 import { AuthProvider } from "./auth/AuthProvider";
 
 const ROUTES = {
@@ -119,6 +119,14 @@ const ROUTES = {
       element: (
         //<PrivateRoute requiredRole="admin">
           <AdminManagementPage />
+        //</PrivateRoute>
+      ),
+    },
+    {
+      path: "admin/report",
+      element: (
+        //<PrivateRoute requiredRole="admin">
+          <ReportPage />
         //</PrivateRoute>
       ),
     },

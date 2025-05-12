@@ -3,7 +3,7 @@ import { Calendar, Plus, Trash2 } from "lucide-react"
 import MainLayout from "../../components/layouts/MainLayout"
 import FlashSalePopup from "../../components/FlashSalePopup"
 
-const FlashSalesAdd = () => {
+const FlashSalesAddPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [currentFlashSale, setCurrentFlashSale] = useState({
     id: "15",
@@ -233,4 +233,4 @@ const FlashSalesAdd = () => {
   )
 }
 
-export default FlashSalesAdd
+export default FlashSalesAddPage

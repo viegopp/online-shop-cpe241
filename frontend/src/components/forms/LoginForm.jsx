@@ -6,6 +6,8 @@ import RememberMeCheckbox from "../forms/RememberMeCheckbox";
 import Button from "../common/Button";
 import { useAuth } from "../../auth/AuthProvider";
 
+//
+
 const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,6 +22,8 @@ const LoginForm = () => {
 
   // ตรวจสอบว่าเป็นหน้า login ของ admin หรือ customer
   const isAdmin = location.pathname.includes("/admin/");
+  console.log(`pathname: ${location.pathname}`);
+  console.log(`isAdmin: ${isAdmin}`);
 
   const handleInputChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -56,6 +60,7 @@ const LoginForm = () => {
             (role.toLowerCase() === "admin" ||
               role.toLowerCase().includes("admin"))
           ) {
+            console.log("Admin login successful");
             navigate("/admin/homepage");
           } else {
             setError("You don't have admin privileges");

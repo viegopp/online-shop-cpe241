@@ -2,18 +2,17 @@ import React from "react";
 
 const Rating = ({ value, className = "" }) => {
   return (
-    <div
-      className={`flex items-center gap-1 text-[10px] whitespace-nowrap ${className}`}
-    >
+    <div className={`flex items-center gap-1 text-[10px] whitespace-nowrap ${className}`}>
       <img
         src="https://cdn.builder.io/api/v1/image/assets/bde9493d25ce464797f593ad6ddaebdc/b99bd7539683a894a0032aa2018e94eac60dee0e?placeholderIfAbsent=true"
         alt={`${value} out of 5 stars`}
         className="aspect-[1] object-contain w-[10px] shrink-0 my-auto"
       />
-      <p>{value.toFixed(1)}</p>
+      <p>{typeof value === 'number' ? `${value.toFixed(1)} ⭐` : 'No Rating'}</p>
     </div>
   );
 };
+
 
 const ProductImage = ({ src, alt }) => {
   return (

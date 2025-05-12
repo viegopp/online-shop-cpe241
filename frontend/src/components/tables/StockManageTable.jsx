@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -8,77 +8,40 @@ import {
 } from "./TableElements";
 import Pagination from "./Pagination";
 import TableToolbar from "./TableToolbar";
+import apiClient from "../../api/AxiosInterceptor";
 import { MoreHorizontal, Trash, X } from "lucide-react";
 
-const StockManageTable = ({ products = [] }) => {
-  // Sample data
-  const defaultProducts = useMemo(() => {
-    const baseProducts = [
-      {
-        id: "000001",
-        name: "เพียวริคุ มิกซ์เบอรรี่",
-        available: true,
-        category: "Beverage",
-        stock: 72,
-      },
-      {
-        id: "000002",
-        name: "เพียวริคุ ปลาดอลลี่",
-        available: false,
-        category: "Beverage",
-        stock: 0,
-      },
-      {
-        id: "000003",
-        name: "เพียวริคุ กล้วย",
-        available: true,
-        category: "Beverage",
-        stock: 12,
-      },
-      {
-        id: "000004",
-        name: "เพียวริคุ ลาบ",
-        available: true,
-        category: "Beverage",
-        stock: 95,
-      },
-      {
-        id: "000005",
-        name: "เพียวริคุ บลูเบอรรี่",
-        available: true,
-        category: "Beverage",
-        stock: 8,
-      },
-    ];
+const StockManageTable = ({
+  products = [],
+  currentPage = 1,
+  itemsPerPage = 5,
+  totalItems = 0,
+  searchTerm = "",
+  filters = { availability: "all", stockLevel: "all" },
+  onPageChange,
+  onSearchChange,
+  onFilterChange,
+  onEdit,
+}) => {
 
-    const extraProducts = Array(15)
-      .fill(0)
-      .map((_, index) => ({
-        id: `00000${index + 6}`.slice(-6),
-        name: `เพียวริคุ สินค้า ${index + 6}`,
-        available: index % 3 !== 0,
-        category: "Beverage",
-        stock: 25 + ((index * 3) % 50),
-      }));
+    const handleDelete = async (productId) => {
+    const confirm = window.confirm("คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?");
+    if (!confirm) return;
 
-    return [...baseProducts, ...extraProducts];
-  }, []);
+    try {
+      const res = await apiClient.delete(`/admin/inventory/${productId}`);
+      if (res.data.success) {
+        alert("ลบสินค้าเรียบร้อยแล้ว");
+        window.location.reload(); // หรือจะเรียก onRefresh() จาก props แทนก็ได้
+      } else {
+        alert("ไม่สามารถลบสินค้าได้");
+      }
+    } catch (err) {
+      console.error("ลบไม่สำเร็จ:", err);
+      alert("เกิดข้อผิดพลาดในการลบสินค้า");
+    }
+  };
 
-  const allProducts = useMemo(
-    () => (products.length > 0 ? products : defaultProducts),
-    [products, defaultProducts]
-  );
-
-  // State
-  const [currentPage, setCurrentPage] = useState(1);
-  const [displayProducts, setDisplayProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    availability: "all",
-    stockLevel: "all",
-  });
   const [showAddModal, setShowAddModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
     id: "",
@@ -87,265 +50,124 @@ const StockManageTable = ({ products = [] }) => {
     category: "Beverage",
     stock: 0,
   });
-  const [productList, setProductList] = useState([]);
+
   const filterRef = useRef(null);
   const toolbarRef = useRef(null);
   const modalRef = useRef(null);
-  const itemsPerPage = 5;
-
-  // Initialize product list with sample data
-  useEffect(() => {
-    setProductList(allProducts);
-  }, [allProducts]);
-
-  // Close filter dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        filterRef.current &&
-        !filterRef.current.contains(event.target) &&
-        !toolbarRef.current.contains(event.target)
-      ) {
-        setFilterOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Close modal when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setShowAddModal(false);
-      }
-    }
-
-    if (showAddModal) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }
-  }, [showAddModal]);
-
-  // Filter products based on search and filter settings
-  useEffect(() => {
-    let filtered = productList.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    // Apply availability filter
-    if (filters.availability !== "all") {
-      filtered = filtered.filter(
-        (product) =>
-          (filters.availability === "available" && product.available) ||
-          (filters.availability === "unavailable" && !product.available)
-      );
-    }
-
-    // Apply stock level filter
-    if (filters.stockLevel !== "all") {
-      filtered = filtered.filter((product) => {
-        if (filters.stockLevel === "low") return product.stock < 10;
-        if (filters.stockLevel === "medium")
-          return product.stock >= 10 && product.stock <= 50;
-        if (filters.stockLevel === "high") return product.stock > 50;
-        return true;
-      });
-    }
-
-    setFilteredProducts(filtered);
-    setCurrentPage(1);
-  }, [searchTerm, productList, filters]);
-
-  // Pagination
-  useEffect(() => {
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    setDisplayProducts(
-      filteredProducts.slice(indexOfFirstItem, indexOfLastItem)
-    );
-  }, [currentPage, filteredProducts, itemsPerPage]);
-
-  // Event handlers
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-  };
-
-  const handleFilter = () => {
-    setFilterOpen(!filterOpen);
-  };
-
-  const handleFilterChange = (type, value) => {
-    setFilters((prev) => ({ ...prev, [type]: value }));
-  };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handleAddProduct = () => {
-    setShowAddModal(true);
-  };
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setNewProduct((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : name === "stock"
-          ? parseInt(value, 10) || 0
-          : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Generate a new ID if empty
-    const productId =
-      newProduct.id || `00000${productList.length + 1}`.slice(-6);
-
-    const productToAdd = {
-      ...newProduct,
-      id: productId,
+  try {
+    const payload = {
+      product_id: newProduct.id || undefined, // optional
+      name: newProduct.name,
+      price: 1,
+      description: "N/A",
+      stock_quantity: parseInt(newProduct.stock, 10),
+      is_available: newProduct.available,
+      manufacturer_name: "บริษัท ที.ซี.ฟาร์มาซูติคอล อุตสาหกรรม จำกัด",
+      category_name: newProduct.category,
+      images: ["/images/placeholder.jpg"],
     };
 
-    setProductList((prev) => [productToAdd, ...prev]);
-    setShowAddModal(false);
-    setNewProduct({
-      id: "",
-      name: "",
-      available: true,
-      category: "Beverage",
-      stock: 0,
-    });
-  };
+    console.log("POST payload:", payload);
+    const res = await apiClient.post("/admin/inventory", payload);
+
+    if (res.data.success) {
+      alert("✅ เพิ่มสินค้าเรียบร้อยแล้ว");
+      setShowAddModal(false);
+      window.location.reload(); // หรือเรียก fetch ใหม่
+    } else {
+      alert("❌ ไม่สามารถเพิ่มสินค้าได้");
+    }
+
+  console.log("API response:", error?.response?.data);
+  } catch (error) {
+    console.error("❌ เพิ่มสินค้าไม่สำเร็จ:", error);
+    alert("⚠️ เกิดข้อผิดพลาดในการเพิ่มสินค้า");
+  }
+};
+
 
   return (
     <div className="w-full mx-auto flex flex-col gap-2">
       <div className="relative" ref={toolbarRef}>
         <TableToolbar
-          onSearch={handleSearch}
-          searchPlaceHolder={"Products"}
-          onFilter={handleFilter}
-          onAddItem={handleAddProduct}
-          itemName={"Product"}
+          onSearch={onSearchChange}
+          searchPlaceHolder="Products"
+          onFilter={() => setFilterOpen(!filterOpen)}
+          onAddItem={() => setShowAddModal(true)}
+          itemName="Product"
         />
 
-        {/* Filter Dropdown */}
         {filterOpen && (
           <div
             className="absolute left-0 top-8 bg-white border border-slate-200 rounded shadow-md z-10 p-3 w-64"
             ref={filterRef}
           >
             <div className="mb-3">
-              <h3 className="text-sm font-medium text-slate-700 mb-1">
-                สถานะสินค้า
-              </h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-1">สถานะสินค้า</h3>
               <div className="flex gap-2">
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.availability === "all"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() => handleFilterChange("availability", "all")}
-                >
-                  All
-                </button>
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.availability === "available"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() =>
-                    handleFilterChange("availability", "available")
-                  }
-                >
-                  Available
-                </button>
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.availability === "unavailable"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() =>
-                    handleFilterChange("availability", "unavailable")
-                  }
-                >
-                  Not Available
-                </button>
+                {["all", "available", "unavailable"].map((val) => (
+                  <button
+                    key={val}
+                    className={`px-2 py-1 text-xs rounded ${
+                      filters.availability === val
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-slate-100 text-slate-700"
+                    }`}
+                    onClick={() => onFilterChange("availability", val)}
+                  >
+                    {val === "all"
+                      ? "All"
+                      : val === "available"
+                      ? "Available"
+                      : "Not Available"}
+                  </button>
+                ))}
               </div>
             </div>
 
             <div className="mb-2">
-              <h3 className="text-sm font-medium text-slate-700 mb-1">
-                ระดับสต็อก
-              </h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-1">ระดับสต็อก</h3>
               <div className="flex flex-wrap gap-2">
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.stockLevel === "all"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() => handleFilterChange("stockLevel", "all")}
-                >
-                  All
-                </button>
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.stockLevel === "low"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() => handleFilterChange("stockLevel", "low")}
-                >
-                  &lt;10
-                </button>
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.stockLevel === "medium"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() => handleFilterChange("stockLevel", "medium")}
-                >
-                  10-50
-                </button>
-                <button
-                  className={`px-2 py-1 text-xs rounded ${
-                    filters.stockLevel === "high"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
-                  onClick={() => handleFilterChange("stockLevel", "high")}
-                >
-                  &gt;50
-                </button>
+                {[
+                  { key: "all", label: "All" },
+                  { key: "low", label: "<10" },
+                  { key: "medium", label: "10-50" },
+                  { key: "high", label: ">50" },
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    className={`px-2 py-1 text-xs rounded ${
+                      filters.stockLevel === key
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-slate-100 text-slate-700"
+                    }`}
+                    onClick={() => onFilterChange("stockLevel", key)}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Product Table */}
       <div className="border border-slate-200 rounded-md overflow-hidden font-satoshi">
         <div className="max-w-full overflow-x-auto">
-          <Table className="w-full table-fixed">
+          <Table className="w-full table-fixed border-collapse">
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableCell
@@ -387,48 +209,34 @@ const StockManageTable = ({ products = [] }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {displayProducts.length > 0 ? (
-                displayProducts.map((product) => (
+              {products.length > 0 ? (
+                products.map((product) => (
                   <TableRow
                     key={product.id}
                     className="border-t border-slate-200"
                   >
-                    <TableCell className="w-[16%] px-8 py-3 text-sm text-slate-500">
-                      {product.id}
-                    </TableCell>
-                    <TableCell className="w-[20%] px-8 py-3 text-sm text-slate-500">
-                      {product.name}
-                    </TableCell>
-                    <TableCell className="w-[16%] px-8 py-3 text-sm">
-                      <span
-                        className={
-                          product.available ? "text-green-600" : "text-red-600"
-                        }
-                      >
+                    <TableCell className="px-8 py-3 text-sm text-slate-700">{product.id}</TableCell>
+                    <TableCell className="px-8 py-3 text-sm text-slate-700">{product.name}</TableCell>
+                    <TableCell className="px-8 py-3 text-sm">
+                      <span className={product.available ? "text-green-600" : "text-red-600"}>
                         {product.available ? "Available" : "Not Available"}
                       </span>
                     </TableCell>
-                    <TableCell className="w-[16%] px-8 py-3 text-sm text-slate-500">
-                      {product.category}
-                    </TableCell>
-                    <TableCell className="w-[16%] px-8 py-3 text-sm text-slate-500">
-                      {product.stock}
-                    </TableCell>
-                    <TableCell className="w-[16%] px-8 py-3 text-sm">
+                    <TableCell className="px-8 py-3 text-sm text-slate-700">{product.category}</TableCell>
+                    <TableCell className="px-8 py-3 text-sm text-slate-700">{product.stock}</TableCell>
+                    <TableCell className="px-8 py-3 text-sm">
                       <div className="flex gap-2">
-                        <button className="w-6 h-6 flex items-center justify-center bg-slate-50 rounded cursor-pointer">
-                          <MoreHorizontal
-                            className="text-slate-500"
-                            size={16}
-                            strokeWidth={1.8}
-                          />
+                        <button
+                          className="w-6 h-6 flex items-center justify-center bg-slate-50 rounded cursor-pointer"
+                          onClick={() => onEdit(product.id)}
+                        >
+                          <MoreHorizontal className="text-slate-500" size={16} strokeWidth={1.8} />
                         </button>
-                        <button className="w-6 h-6 flex items-center justify-center bg-red-50 rounded cursor-pointer">
-                          <Trash
-                            className="text-red-500"
-                            size={16}
-                            strokeWidth={1.8}
-                          />
+                        <button
+                          className="w-6 h-6 flex items-center justify-center bg-red-50 border border-red-100 rounded hover:bg-red-100"
+                          onClick={() => handleDelete(product.id)}
+                        >
+                          <Trash className="text-red-500" size={16} strokeWidth={1.8} />
                         </button>
                       </div>
                     </TableCell>
@@ -436,10 +244,7 @@ const StockManageTable = ({ products = [] }) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="px-4 py-8 text-center text-sm text-slate-500"
-                  >
+                  <TableCell colSpan={6} className="text-center py-8 text-slate-500">
                     ไม่พบข้อมูลสินค้าที่ค้นหา
                   </TableCell>
                 </TableRow>
@@ -449,12 +254,11 @@ const StockManageTable = ({ products = [] }) => {
         </div>
       </div>
 
-      {/* Pagination */}
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        totalItems={filteredProducts.length}
-        onPageChange={handlePageChange}
+        totalItems={totalItems}
+        onPageChange={onPageChange}
       />
 
       {/* Add Product Modal */}

@@ -1,5 +1,7 @@
+// src/auth/AuthProvider.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import apiClient from "../api/AxiosInterceptor";
 
 const AuthContext = createContext();
 
@@ -8,55 +10,103 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = Cookies.get("Mock_token");
-    const role = Cookies.get("user_role");
+    // ตรวจสอบ token จาก cookies
+    const token = Cookies.get("auth_token");
     if (token) {
-      setUser({ name: "Mock User", role: role || "customer" });
+      // ดึงข้อมูลผู้ใช้จาก cookies แทนการเรียก API ใหม่ทุกครั้ง
+      const userData = JSON.parse(Cookies.get("user_data") || "{}");
+      if (userData && userData.admin_id) {
+        setUser(userData);
+      }
     }
     setLoading(false);
   }, []);
 
-  const login = (email, password) => {
-    if (email === "admin" && password === "1234") {
-      Cookies.set("Mock_token", "mocked_token_value", { expires: 1 }); // expires in 1 day
-      Cookies.set("user_role", "admin", { expires: 1 });
-      setUser({ name: "Admin User", role: "admin" });
-      return { success: true, message: "login success" };
-    } else if (email === "customer" && password === "1234") {
-      Cookies.set("Mock_token", "mocked_token_value", { expires: 1 });
-      Cookies.set("user_role", "customer", { expires: 1 });
-      setUser({ name: "Customer User", role: "customer" });
-      return { success: true, message: "login success" };
+  const login = async (email, password) => {
+    try {
+      // เรียก API login จาก backend
+      const response = await apiClient.post(`/admin/login`, {
+        email,
+        password,
+      });
+
+      if (response.data.success) {
+        const { token, ...userData } = response.data.data;
+
+        // เก็บข้อมูลใน cookies
+        Cookies.set("auth_token", token, { expires: 1 }); // หมดอายุใน 1 วัน
+        Cookies.set("user_data", JSON.stringify(userData), { expires: 1 });
+        console.log("User data:", userData);
+        setUser(userData);
+        return {
+          success: true,
+          message: "Login successful",
+          role: userData.role,
+        };
+      } else {
+        return {
+          success: false,
+          message: response.data.message || "Login failed",
+        };
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      const errorMessage =
+        error.response?.data?.message || "Something went wrong";
+      return { success: false, message: errorMessage };
     }
-    return { success: false, message: "invalid credentials" };
   };
 
-  const signup = (email, password, confirmPassword) => {
+  const signup = async (
+    email,
+    password,
+    confirmPassword,
+    firstName,
+    lastName
+  ) => {
+    // สำหรับตอนนี้ให้เป็น mock ไว้ก่อน เนื่องจากไม่มี API signup ใน backend ที่ให้มา
     if (password !== confirmPassword) {
-      return { success: false, message: "passwords do not match" };
+      return { success: false, message: "Passwords do not match" };
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       return {
         success: false,
-        message: "password must be at least 6 characters",
+        message: "Password must be at least 8 characters",
       };
     }
 
-    Cookies.set("Mock_token", "mocked_token_value", { expires: 1 });
-    Cookies.set("user_role", "customer", { expires: 1 });
-    setUser({ name: email, role: "customer" });
-    return { success: true, message: "sign up success" };
+    // TODO: เชื่อม API signup เมื่อมี endpoint พร้อม
+    return {
+      success: false,
+      message: "Signup functionality not implemented yet",
+    };
   };
 
   const logout = () => {
-    Cookies.remove("Mock_token");
-    Cookies.remove("user_role");
+    // ลบ token และข้อมูลผู้ใช้
+    Cookies.remove("auth_token");
+    Cookies.remove("user_data");
     setUser(null);
   };
 
+  // สร้างฟังก์ชั่นสำหรับเพิ่ม token ใน header ของ request
+  const getAuthHeader = () => {
+    const token = Cookies.get("auth_token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, signup }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        signup,
+        getAuthHeader,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -11,9 +11,11 @@ const PrivateRoute = ({ children, requiredRole }) => {
 
   // Determine if this is an admin or customer route
   const isAdminRoute = location.pathname.includes("/admin/");
+  console.log(`isAdminRoute: ${isAdminRoute}`);
 
   // If user is not authenticated, redirect to appropriate login page
   if (!user) {
+    console.log("User not authenticated");
     return <Navigate to={isAdminRoute ? "/admin/login" : "/customer/login"} />;
   }
 
@@ -22,7 +24,11 @@ const PrivateRoute = ({ children, requiredRole }) => {
     // Redirect admin to admin routes and customers to customer routes
     return (
       <Navigate
-        to={user.role === "admin" ? "/admin/homepage" : "/customer/homepage"}
+        to={
+          ["Super Admin", "Staff Admin"].includes(user.role)
+            ? "/admin/homepage"
+            : "/customer/homepage"
+        }
       />
     );
   }

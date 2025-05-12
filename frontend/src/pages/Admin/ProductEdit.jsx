@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import MainLayout from "../../components/layouts/MainLayout";
 import InputField from "../../components/forms/InputField";
 import Toggle from "../../components/common/Toggle";
 import TagInput from "../../components/forms/TagInput";
+import apiClient from "../../api/AxiosInterceptor";
 import { ImageItem, ImageItemGroup } from "../../components/common/ImageItem";
 import { Trash2 } from "lucide-react";
 
+
 const ProductEditPage = () => {
+  const navigate = useNavigate();
+
   // Get productId from URL
   const { productId } = useParams();
   const fileInputRef = useRef(null);
@@ -56,12 +60,40 @@ const ProductEditPage = () => {
 
   // Fetch product data based on productId
   useEffect(() => {
-    if (productId) {
-      // Here you would typically fetch the product data from your API
-      console.log(`Fetching product data for ID: ${productId}`);
-      // For now, we'll use the default state
-    }
+  const fetchProduct = async () => {
+    try {
+      const res = await apiClient.get(`/admin/inventory/${productId}`);
+      const data = res.data?.data;
+
+      if (data) {
+        setFormData({
+          productName: data.name || "",
+          productId: data.product_id || "",
+          manufacturer: data.manufacturer || "",
+          description: data.description || "",
+          price: data.price || "0.00",
+          inventory: data.stock_quantity?.toString() || "0",
+          isAvailable: !!data.is_available,
+          categories: [data.category || "Uncategorized"],
+          images: data.images || [],
+        });
+
+        setProductImages(
+          (data.images || []).map((img, i) => ({
+            id: i + 1,
+            src: img,
+            alt: `Product image ${i + 1}`,
+            }))
+          );
+        }
+      } catch (error) {
+      console.error("❌ Failed to fetch product data:", error);
+      }
+    };
+
+    if (productId) fetchProduct();
   }, [productId]);
+
 
   // Handle all input changes
   const handleInputChange = (field, value) => {
@@ -143,16 +175,34 @@ const ProductEditPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+      e.preventDefault();
 
-    // Prepare images for submission
-    const imagesToUpload = productImages
-      .filter((image) => image.file) // Only get images with actual files
-      .map((image) => image.file);
+    try {
+      const payload = {
+        name: formData.productName,
+        description: formData.description,
+        price: parseFloat(formData.price) || 0,
+        stock_quantity: parseInt(formData.inventory) || 0,
+        is_available: formData.isAvailable,
+        images: productImages.length > 0
+        ? productImages.map((img) => img.src)
+        : ["/images/products/default.jpg"], // ✅ fallback รูปว่าง
+      };
+      console.log("PATCH payload:", payload);
+      const res = await apiClient.patch(`/admin/inventory/${productId}`, payload);
 
-    console.log("Saving product:", formData);
-    console.log("Images to upload:", imagesToUpload);
+    if (res.data.success) {
+      alert("✅ Product updated successfully!");
+      navigate("/admin/inventory/stock-management");
+    } else {
+      alert("❌ Failed to update product.");
+    }
+      } catch (error) {
+        console.error("PATCH failed:", error.response?.data || error.message);
+        alert("❌ Error saving product. See console for details.");
+      }
+    };
 
     // Here you would typically upload the images and save the product data
     // For example:
@@ -162,7 +212,6 @@ const ProductEditPage = () => {
     //   formDataToSubmit.append(`image-${index}`, file);
     // });
     // fetch('/api/products', { method: 'POST', body: formDataToSubmit });
-  };
 
   return (
     <MainLayout breadcrumbs={breadcrumbItems} title="Products Editor">

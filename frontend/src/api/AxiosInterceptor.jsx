@@ -1,12 +1,13 @@
+// src/api/AxiosInterceptor.jsx
 import axios from "axios";
 import Cookies from "js-cookie";
 
 const API_URL =
-  import.meta.env.VITE_ONLINE_SHOP_API_URL || "http://localhost:8000/api";
+  import.meta.env.VITE_ONLINE_SHOP_API_URL || "http://localhost:8000";
 
 // สร้าง axios instance พร้อมกำหนด baseURL
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },

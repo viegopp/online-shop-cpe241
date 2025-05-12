@@ -68,8 +68,9 @@ CREATE TABLE products (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (created_by) REFERENCES admins(admin_id),
-    FOREIGN KEY (updated_by) REFERENCES admins(admin_id)
+    deleted_at TIMESTAMP NULL,
+    FOREIGN KEY (created_by) REFERENCES admins(admin_id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES admins(admin_id) ON DELETE SET NULL
 );
 
 CREATE TABLE product_images (
@@ -152,7 +153,7 @@ CREATE TABLE reviews (
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     replied_by INT,
-    FOREIGN KEY (replied_by) REFERENCES admins(admin_id)
+    FOREIGN KEY (replied_by) REFERENCES admins(admin_id) ON DELETE SET NULL
 );
 
 -- ========== PROMOTIONS ==========
@@ -162,6 +163,7 @@ CREATE TABLE promotions (
     name VARCHAR(50) NOT NULL,
     release_date DATETIME NOT NULL,
     expiry_date DATETIME NOT NULL,
+    is_available BOOLEAN NOT NULL DEFAULT FALSE,
     banner_path VARCHAR(2048),
     discount_percent INT NOT NULL CHECK (discount_percent >= 0 AND discount_percent <= 100),
     CONSTRAINT chk_promotion_dates CHECK (release_date < expiry_date),
@@ -170,8 +172,8 @@ CREATE TABLE promotions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (created_by) REFERENCES admins(admin_id),
-    FOREIGN KEY (updated_by) REFERENCES admins(admin_id)
+    FOREIGN KEY (created_by) REFERENCES admins(admin_id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES admins(admin_id) ON DELETE SET NULL
 );
 
 CREATE TABLE promotion_products (
@@ -423,8 +425,10 @@ INSERT INTO promotions (promotion_id, name, release_date, expiry_date, banner_pa
 VALUES
 ('PROM0001', 'พี่แฮมสั่งลด', '2050-06-01 00:00:00', '2050-06-16 23:59:59','/images/promotion/PROM0001_banner.jpg', 10, 1, 1),  -- Promotion created and updated by admin 1
 ('PROM0002', 'พี่แฮมถูกหวย', '2025-02-16 00:00:00', '2025-02-23 23:59:59','/images/promotion/PROM0002_banner.jpg', 20, 2, 2),  -- Promotion created and updated by admin 2
-('PROM0003', 'เพียวริคุสักหน่อยมั้ย', '2025-12-01 00:00:00', '2025-12-25 23:59:59', '/images/promotion/PROM0003_banner.jpg', 10, 3, 3);  -- Promotion created and updated by admin 3
-
+('PROM0003', 'เพียวริคุสักหน่อยมั้ย', '2025-12-01 00:00:00', '2025-12-25 23:59:59', '/images/promotion/PROM0003_banner.jpg', 10, 3, 3),  -- Promotion created and updated by admin 3
+('PROM0004', 'โปรกลางปีลดกระหน่ำ', '2025-05-01 00:00:00', '2026-05-15 23:59:59', '/images/promotion/PROM0004_banner.jpg', 15, 1, 1), 
+('PROM0005', 'สุขท้ายปี แฮปปี้เบอร์แรง', '2025--01-20 00:00:00', '2026-01-20 23:59:59', '/images/promotion/PROM0005_banner.jpg', 25, 2, 2), 
+('PROM0006', 'สงกรานต์ชุ่มฉ่ำ ลดสะใจ', '2025-04-10 00:00:00', '2026-04-10 23:59:59', '/images/promotion/PROM0006_banner.jpg', 30, 3, 3); 
 -- Inserting product associations for promotions
 INSERT INTO promotion_products (promotion_id, product_id)
 VALUES
@@ -433,7 +437,23 @@ VALUES
 ('PROM0002', 'PRK-0003'),  -- Associating product PRK-0003 with promotion PROM0002
 ('PROM0002', 'GPK-0001'),  -- Associating product GPK-0001 with promotion PROM0002
 ('PROM0003', 'PRK-0004'),  -- Associating product PRK-0004 with promotion PROM0003
-('PROM0003', 'GPK-0002');  -- Associating product GPK-0002 with promotion PROM0003
+('PROM0003', 'GPK-0002'),  -- Associating product GPK-0002 with promotion PROM0003
+('PROM0004', 'PRK-0005'),
+('PROM0004', 'PRK-0006'),
+('PROM0004', 'PRK-0007'),
+('PROM0004', 'DPK-0001'),
+('PROM0004', 'GPK-0001'),
+('PROM0005', 'PRK-0001'),
+('PROM0005', 'PRK-0003'),
+('PROM0005', 'PRK-0008'),
+('PROM0005', 'DPK-0002'),
+('PROM0005', 'GPK-0002'),
+('PROM0006', 'PRK-0002'),
+('PROM0006', 'PRK-0004'),
+('PROM0006', 'PRK-0006'),
+('PROM0006', 'PRK-0007'),
+('PROM0006', 'GPK-0001');
+
 
 -- address (may be optimize ?)
 INSERT INTO addresses (first_name, last_name, phone_number, customer_id, address_text, country, province, district, postal_code, is_default)

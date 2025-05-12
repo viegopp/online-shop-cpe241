@@ -62,15 +62,13 @@ const TrackOrderDetailPage = () => {
               name: "เพียวริคุ มิกซ์เบอร์รี่",
               unitPrice: 15.0,
               quantity: 1,
-              discount: "5%",
-              total: 14.25,
+              total: 15.0,
             },
             {
               id: "000003",
               name: "เพียวริคุ กล้วย",
               unitPrice: 20.0,
               quantity: 1,
-              discount: "0%",
               total: 20.0,
             },
             {
@@ -78,12 +76,11 @@ const TrackOrderDetailPage = () => {
               name: "เพียวริคุ ลาบ",
               unitPrice: 99.5,
               quantity: 1,
-              discount: "10%",
-              total: 89.55,
+              total: 99.5,
             },
           ]}
           shipping={0}
-          taxRate={0.07}
+          discountRate={20}
         />
       </div>
     </MainLayout>

@@ -22,6 +22,7 @@ use App\Http\Controllers\Customer\CustomerProductDetailController;
 use App\Http\Controllers\Customer\CustomerCartPageController;
 use App\Http\Controllers\Customer\CustomerFlashSalePageController;
 use App\Http\Controllers\Customer\CustomerProfileManagementController;
+use App\Http\Controllers\Customer\CustomerCheckoutPageController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -129,6 +130,8 @@ Route::middleware([Cors::class])->group(function () {
         Route::post('profile/address/add', [CustomerProfileManagementController::class, 'addAddress']);
         Route::put('profile/address/{address_id}/update', [CustomerProfileManagementController::class, 'updateAddress']);
         Route::delete('profile/address/remove', [CustomerProfileManagementController::class, 'deleteAddress']);
+        Route::get('checkout/{customer_id}', [CustomerCheckoutPageController::class, 'getCheckoutInfo']);
+        Route::post('checkout/placeorder', [CustomerCheckoutPageController::class, 'placeOrder']);
 
 
         Route::middleware('customer.auth')->group(function () {

@@ -20,6 +20,10 @@ use App\Http\Controllers\Customer\CustomerHomePageController;
 use App\Http\Controllers\Customer\CustomerSearchPageController;
 use App\Http\Controllers\Customer\CustomerProductDetailController;
 use App\Http\Controllers\Customer\CustomerCartPageController;
+use App\Http\Controllers\Customer\CustomerFlashSalePageController;
+use App\Http\Controllers\Customer\CustomerProfileManagementController;
+use App\Http\Controllers\Customer\CustomerCheckoutPageController;
+use App\Http\Controllers\Customer\CustomerConfirmationPageController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -107,15 +111,30 @@ Route::middleware([Cors::class])->group(function () {
     Route::prefix('customer')->group(function () {
         Route::post('register', [CustomerAuthController::class, 'register']);
         Route::post('login',    [CustomerAuthController::class, 'login']);
+
         Route::get('homepage/promotions/hero', [CustomerHomePageController::class, 'getHeroPromotions']);
         Route::get('homepage/products/hot', [CustomerHomePageController::class, 'getHotProducts']);
-        Route::get('homepage/products/flashsales', [CustomerHomePageController::class, 'getFlashSales']);
+        Route::get('homepage/products/flashsales', [CustomerHomePageController::class, 'getFlashSalesProduct']);
+
         Route::get('search', [CustomerSearchPageController::class, 'searchProducts']);
+        
         Route::get('product/{product_id}', [CustomerProductDetailController::class, 'getProductDetailByID']);
+        Route::post('cart/add', [CustomerProductDetailController::class, 'addToCart']);
+
         Route::get('cart/{customer_id}', [CustomerCartPageController::class, 'getCartDetailsByCustomerID']);
-        Route::post('cart/add', [CustomerCartPageController::class, 'addToCart']);
         Route::put('cart/update', [CustomerCartPageController::class, 'updateCartItemQuantity']);
         Route::delete('cart/remove', [CustomerCartPageController::class, 'removeFromCart']);
+        Route::get('flash-sale/promotions', [CustomerFlashSalePageController::class, 'getActivePromotions']);
+        Route::get('flash-sale/products', [CustomerFlashSalePageController::class, 'getFlashSaleProducts']);
+        Route::get('profile/{user_id}', [CustomerProfileManagementController::class, 'getProfile']);
+        Route::put('profile/{user_id}/update', [CustomerProfileManagementController::class, 'updateProfile']);
+        Route::post('profile/address/add', [CustomerProfileManagementController::class, 'addAddress']);
+        Route::put('profile/address/{address_id}/update', [CustomerProfileManagementController::class, 'updateAddress']);
+        Route::delete('profile/address/remove', [CustomerProfileManagementController::class, 'deleteAddress']);
+        Route::get('checkout/{customer_id}', [CustomerCheckoutPageController::class, 'getCheckoutInfo']);
+        Route::post('checkout/placeorder', [CustomerCheckoutPageController::class, 'placeOrder']);
+        Route::get('confirmation/{order_id}', [CustomerConfirmationPageController::class, 'getConfirmationInfo']);
+
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

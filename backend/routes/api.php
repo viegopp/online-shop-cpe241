@@ -113,6 +113,9 @@ Route::middleware([Cors::class])->group(function () {
         Route::get('search', [CustomerSearchPageController::class, 'searchProducts']);
         Route::get('product/{product_id}', [CustomerProductDetailController::class, 'getProductDetailByID']);
         Route::get('cart/{customer_id}', [CustomerCartPageController::class, 'getCartDetailsByCustomerID']);
+        Route::post('cart/add', [CustomerCartPageController::class, 'addToCart']);
+        Route::put('cart/update', [CustomerCartPageController::class, 'updateCartItemQuantity']);
+        Route::delete('cart/remove', [CustomerCartPageController::class, 'removeFromCart']);
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerCartPageController extends Controller
 {
@@ -28,6 +29,8 @@ class CustomerCartPageController extends Controller
                 FROM cart_items ci
                 JOIN products p ON ci.product_id = p.product_id
                 WHERE ci.customer_id = ?
+                AND p.is_available = TRUE
+                AND p.deleted_at IS NULL
             ", [$customer_id]);
 
             $summary = DB::selectOne("
@@ -56,48 +59,6 @@ class CustomerCartPageController extends Controller
                 'success' => false,
                 'message' => 'Failed to retrieve cart details.',
                 'error' => app()->environment('local') ? $e->getMessage() : 'Unexpected server error.'
-            ], 500);
-        }
-    }
-
-    public function addToCart(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'customer_id' => 'required|integer|exists:customers,customer_id',
-            'product_id'  => 'required|string|exists:products,product_id',
-            'quantity'    => 'nullable|integer|min:1',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        try {
-            $quantity = $request->input('quantity', 1);
-
-            DB::statement("
-                INSERT INTO cart_items (customer_id, product_id, quantity, added_at)
-                VALUES (?, ?, ?, NOW())
-                ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity), updated_at = NOW()
-            ", [
-                $request->customer_id,
-                $request->product_id,
-                $quantity
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Product added to cart.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to add product.',
-                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -174,17 +135,39 @@ class CustomerCartPageController extends Controller
             ], 422);
         }
 
+        DB::statement("START TRANSACTION");
+
         try {
+
+            $exists = DB::selectOne("
+            SELECT 1 FROM cart_items
+            WHERE customer_id = ? AND product_id = ?
+            ", [
+                $request->customer_id,
+                $request->product_id
+            ]);
+
+            if (!$exists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cart item not found.'
+                ], 404);
+            }            
+            
             $deleted = DB::delete("
                 DELETE FROM cart_items
                 WHERE customer_id = ? AND product_id = ?
             ", [$request->customer_id, $request->product_id]);
+
+            DB::statement("COMMIT");
 
             return response()->json([
                 'success' => true,
                 'message' => 'Cart item removed.'
             ]);
         } catch (\Exception $e) {
+            DB::statement("ROLLBACK");
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to remove product.',

@@ -109,13 +109,17 @@ Route::middleware([Cors::class])->group(function () {
     Route::prefix('customer')->group(function () {
         Route::post('register', [CustomerAuthController::class, 'register']);
         Route::post('login',    [CustomerAuthController::class, 'login']);
+
         Route::get('homepage/promotions/hero', [CustomerHomePageController::class, 'getHeroPromotions']);
         Route::get('homepage/products/hot', [CustomerHomePageController::class, 'getHotProducts']);
-        Route::get('homepage/products/flashsales', [CustomerHomePageController::class, 'getFlashSales']);
+        Route::get('homepage/products/flashsales', [CustomerHomePageController::class, 'getFlashSalesProduct']);
+
         Route::get('search', [CustomerSearchPageController::class, 'searchProducts']);
+        
         Route::get('product/{product_id}', [CustomerProductDetailController::class, 'getProductDetailByID']);
+        Route::post('cart/add', [CustomerProductDetailController::class, 'addToCart']);
+
         Route::get('cart/{customer_id}', [CustomerCartPageController::class, 'getCartDetailsByCustomerID']);
-        Route::post('cart/add', [CustomerCartPageController::class, 'addToCart']);
         Route::put('cart/update', [CustomerCartPageController::class, 'updateCartItemQuantity']);
         Route::delete('cart/remove', [CustomerCartPageController::class, 'removeFromCart']);
         Route::get('flash-sale/promotions', [CustomerFlashSalePageController::class, 'getActivePromotions']);

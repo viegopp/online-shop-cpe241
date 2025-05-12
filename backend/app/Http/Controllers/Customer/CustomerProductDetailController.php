@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerProductDetailController extends Controller
 {
     public function getProductDetailByID(Request $request, $product_id)
     {
         try {
-            // Product detail with image gallery and promotion
+            // 1. Check valid product
             $product = DB::selectOne("
                 SELECT 
                     p.product_id,
@@ -26,20 +28,24 @@ class CustomerProductDetailController extends Controller
                 LEFT JOIN product_images pi ON p.product_id = pi.product_id
                 LEFT JOIN promotion_products pp ON p.product_id = pp.product_id
                 LEFT JOIN promotions prm ON pp.promotion_id = prm.promotion_id 
+                    AND prm.is_available = 1
                     AND NOW() BETWEEN prm.release_date AND prm.expiry_date
-                WHERE p.product_id = ?
+                WHERE 
+                    p.product_id = ?
+                    AND p.is_available = TRUE
+                    AND p.deleted_at IS NULL
                 GROUP BY 
                     p.product_id, p.name, p.description, p.price, p.stock_quantity, p.is_available
             ", [$product_id]);
-
+    
             if (!$product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Product not found.'
+                    'message' => 'Product not found or not available.'
                 ], 404);
             }
-
-            // Rating summary
+    
+            // 2. Rating summary
             $ratingSummary = DB::selectOne("
                 SELECT 
                     ROUND(AVG(r.rating), 1) AS avg_rating,
@@ -47,8 +53,8 @@ class CustomerProductDetailController extends Controller
                 FROM reviews r
                 WHERE r.product_id = ?
             ", [$product_id]);
-
-            // Rating breakdown
+    
+            // 3. Rating breakdown
             $ratingBreakdown = DB::select("
                 SELECT 
                     r.rating,
@@ -58,8 +64,13 @@ class CustomerProductDetailController extends Controller
                 GROUP BY r.rating
                 ORDER BY r.rating DESC
             ", [$product_id]);
-
-            // Customer reviews (limit 5)
+    
+            // 4. Review pagination setup
+            $reviewPage = max((int) $request->input('page', 1), 1);
+            $reviewLimit = 3;
+            $reviewOffset = ($reviewPage - 1) * $reviewLimit;
+    
+            // 5. Paginated recent reviews
             $reviews = DB::select("
                 SELECT 
                     r.rating,
@@ -76,9 +87,9 @@ class CustomerProductDetailController extends Controller
                 LEFT JOIN admins a ON r.replied_by = a.admin_id
                 WHERE r.product_id = ?
                 ORDER BY r.created_at DESC
-                LIMIT 5 OFFSET 0
-            ", [$product_id]);
-
+                LIMIT ? OFFSET ?
+            ", [$product_id, $reviewLimit, $reviewOffset]);
+    
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -92,16 +103,73 @@ class CustomerProductDetailController extends Controller
                         'is_available'   => (bool)$product->is_available,
                         'images'         => $product->image_gallery ? explode(',', $product->image_gallery) : []
                     ],
-                    'rating_summary'  => $ratingSummary ?? ['avg_rating' => null, 'total_reviews' => 0],
-                    'rating_breakdown'=> $ratingBreakdown,
-                    'recent_reviews'  => $reviews
+                    'rating_summary'    => $ratingSummary ?? ['avg_rating' => null, 'total_reviews' => 0],
+                    'rating_breakdown'  => $ratingBreakdown,
+                    'recent_reviews'    => $reviews,
+                    'review_pagination' => [
+                        'current_page' => $reviewPage,
+                        'per_page'     => $reviewLimit,
+                        'offset'       => $reviewOffset,
+                        'total_reviews'=> $ratingSummary->total_reviews ?? 0
+                    ]
                 ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Something went wrong.',
-                'error'   => app()->environment('local') ? $e->getMessage() : 'Unexpected server error.'
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }    
+
+    public function addToCart(Request $request)
+    {
+        $token = $request->bearerToken();
+        $customer = Cache::get("customer_token:$token");
+        $customer_id = $customer['customer_id'];
+
+        $validator = Validator::make($request->all(), [
+            'product_id'  => 'required|string|exists:products,product_id',
+            'quantity'    => 'nullable|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        DB::statement("START TRANSACTION");
+
+        try {
+            $quantity = $request->input('quantity', 1);
+
+            DB::statement("
+                INSERT INTO cart_items (customer_id, product_id, quantity, added_at)
+                VALUES (?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity), updated_at = NOW()
+            ", [
+                $customer_id,
+                $request->product_id,
+                $quantity
+            ]);
+
+            DB::statement("COMMIT");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product added to cart.'
+            ]);
+        } catch (\Exception $e) {
+            DB::statement("ROLLBACK");
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add product.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

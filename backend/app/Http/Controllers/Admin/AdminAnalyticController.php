@@ -40,19 +40,27 @@ class AdminAnalyticController extends Controller
                 FROM customers
             ");
 
+            // Total Orders
+            $totalOrders = DB::select("
+                SELECT COUNT(*) AS total_orders
+                FROM orders
+                WHERE status_code != 1
+            ");
+
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'monthly_sales' => $monthlySales,
-                    'total_sales_amount' => $totalSales[0]->total_sales_amount,
-                    'total_customers' => $totalCustomers[0]->total_customers
+                    'monthly_sales'       => $monthlySales,
+                    'total_sales_amount'  => $totalSales[0]->total_sales_amount,
+                    'total_customers'     => $totalCustomers[0]->total_customers,
+                    'total_orders'        => $totalOrders[0]->total_orders
                 ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Something went wrong.',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ], 500);
         }
     }

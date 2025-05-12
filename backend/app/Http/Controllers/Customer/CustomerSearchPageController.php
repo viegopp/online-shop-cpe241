@@ -20,8 +20,7 @@ class CustomerSearchPageController extends Controller
                 'min_rating'      => 'nullable|numeric|min:0|max:5',
                 'page'            => 'nullable|integer|min:1',
             ]);
-
-            // Manual logic: price range consistency
+    
             $validator->after(function ($validator) use ($request) {
                 if (
                     $request->filled('min_price') &&
@@ -31,7 +30,7 @@ class CustomerSearchPageController extends Controller
                     $validator->errors()->add('min_price', 'min_price cannot be greater than max_price.');
                 }
             });
-
+    
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -39,16 +38,30 @@ class CustomerSearchPageController extends Controller
                     'errors'  => $validator->errors()
                 ], 422);
             }
-
-            $category_id     = $request->input('category_id');
-            $manufacturer_id = $request->input('manufacturer_id');
-            $min_price       = $request->input('min_price', 0);
-            $max_price       = $request->input('max_price', 999999);
-            $min_rating      = $request->input('min_rating', 0);
-            $page            = max((int) $request->input('page', 1), 1);
-            $limit           = 24;
-            $offset          = ($page - 1) * $limit;
-
+    
+            $page      = max((int) $request->input('page', 1), 1);
+            $limit     = 24;
+            $offset    = ($page - 1) * $limit;
+            $bindings  = [
+                'min_price'  => $request->input('min_price', 0),
+                'max_price'  => $request->input('max_price', 999999),
+                'min_rating' => $request->input('min_rating', 0),
+                'limit'      => $limit,
+                'offset'     => $offset,
+            ];
+    
+            $filters = "";
+    
+            if ($request->filled('category_id')) {
+                $filters .= " AND p.category_id = :category_id";
+                $bindings['category_id'] = $request->category_id;
+            }
+    
+            if ($request->filled('manufacturer_id')) {
+                $filters .= " AND p.manufacturer_id = :manufacturer_id";
+                $bindings['manufacturer_id'] = $request->manufacturer_id;
+            }
+    
             $sql = "
                 SELECT 
                     p.product_id,
@@ -60,31 +73,20 @@ class CustomerSearchPageController extends Controller
                         WHERE pi.product_id = p.product_id
                         LIMIT 1
                     ) AS image_path,
-                    ROUND(AVG(r.rating), 1) AS avg_rating
+                    COALESCE(ROUND(AVG(r.rating), 1), 0) AS avg_rating
                 FROM products p
                 LEFT JOIN reviews r ON p.product_id = r.product_id
-                WHERE p.is_available = TRUE
-                AND (:category_id_filter IS NULL OR p.category_id = :category_id_match)
-                AND (:manufacturer_id_filter IS NULL OR p.manufacturer_id = :manufacturer_id_match)
-                AND (p.price BETWEEN :min_price AND :max_price)
+                WHERE 1=1 $filters
+                AND p.is_available = TRUE AND p.deleted_at IS NULL
+                AND p.price BETWEEN :min_price AND :max_price
                 GROUP BY p.product_id, p.name, p.price
                 HAVING avg_rating >= :min_rating
                 ORDER BY p.created_at DESC
                 LIMIT :limit OFFSET :offset
             ";
-
-            $products = DB::select($sql, [
-                'category_id_filter'     => $category_id,
-                'category_id_match'      => $category_id,
-                'manufacturer_id_filter' => $manufacturer_id,
-                'manufacturer_id_match'  => $manufacturer_id,
-                'min_price'              => $min_price,
-                'max_price'              => $max_price,
-                'min_rating'             => $min_rating,
-                'limit'                  => $limit,
-                'offset'                 => $offset,
-            ]);
-
+    
+            $products = DB::select($sql, $bindings);
+    
             return response()->json([
                 'success' => true,
                 'data' => $products,
@@ -101,5 +103,5 @@ class CustomerSearchPageController extends Controller
                 'error'   => app()->environment('local') ? $e->getMessage() : 'Unexpected server error.'
             ], 500);
         }
-    }
+    }    
 }

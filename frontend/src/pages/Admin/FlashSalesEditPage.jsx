@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import apiClient from "../../api/AxiosInterceptor"
 import MainLayout from "../../components/layouts/MainLayout"
-import FlashSaleForm from "../../components/forms/FlashSaleForm"
+import FlashSaleForm from "../../components/forms/FlashSaleForm" // สมมุติคุณแยก form ไว้ (หรือคัดลอกจาก Add ได้เลย)
 
 const FlashSalesEditPage = () => {
   const { id } = useParams()
@@ -42,16 +42,16 @@ const FlashSalesEditPage = () => {
     fetchFlashSale()
   }, [id])
 
-  const handleUpdate = async (formData) => {
+  const handleUpdate = async (updatedData) => {
     try {
       await apiClient.put(`/admin/flash-sales/${id}`, {
-        promotion_name: formData.promotionName,
-        discount_percent: parseInt(formData.discountPercent),
-        release_date: formData.releaseDate,
-        expiry_date: formData.expiryDate,
-        is_available: formData.status,
+        promotion_name: updatedData.promotionName,
+        discount_percent: parseInt(updatedData.discountPercent),
+        release_date: updatedData.releaseDate,
+        expiry_date: updatedData.expiryDate,
+        is_available: updatedData.status,
         banner_path: "", // ปรับเมื่อรองรับ banner
-        product_ids: formData.products.map(p => p.id),
+        product_ids: updatedData.products.map(p => p.id),
       })
 
       alert("Flash sale updated successfully!")

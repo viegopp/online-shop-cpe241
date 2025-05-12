@@ -1,83 +1,72 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import apiClient from "../../api/AxiosInterceptor"
 import { Search, Filter } from "lucide-react"
 import Button from "../../components/common/Button"
 import MainLayout from "../../components/layouts/MainLayout"
-import FlashSalesTable from "../../components/tables/FlashSalesTable";
+import FlashSalesTable from "../../components/tables/FlashSalesTable"
 import Input from "../../components/common/Input"
 
 function FlashSalesListPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const totalItems = 1000
+  const [flashSalesData, setFlashSalesData] = useState([])
+  const [totalItems, setTotalItems] = useState(0)
+  const [loading, setLoading] = useState(false)
+
   const itemsPerPage = 3
   const totalPages = Math.ceil(totalItems / itemsPerPage)
 
-  // Sample data matching the screenshot
-  const flashSalesData = [
-    {
-      id: 42,
-      promotionName: "พี่แฮมสั่งลด",
-      status: "Active",
-      startDate: new Date("2050-03-01"),
-      endDate: new Date("2050-03-16"),
-      products: [
-        "/placeholder.svg?height=60&width=30",
-        "/placeholder.svg?height=60&width=30",
-        "/placeholder.svg?height=60&width=30",
-      ],
-    },
-    {
-      id: 23,
-      promotionName: "พี่แฮมถูกหวย",
-      status: "Expired",
-      startDate: new Date("2050-02-16"),
-      endDate: new Date("2050-02-16"),
-      products: [
-        "/placeholder.svg?height=60&width=30",
-        "/placeholder.svg?height=60&width=30",
-        "/placeholder.svg?height=60&width=30",
-      ],
-    },
-    {
-      id: 156,
-      promotionName: "เพียวริคุสักหน่อยมั้ย",
-      status: "Expired",
-      startDate: new Date("2050-01-21"),
-      endDate: new Date("2050-01-31"),
-      products: [
-        "/placeholder.svg?height=60&width=30",
-        "/placeholder.svg?height=60&width=30",
-        "/placeholder.svg?height=60&width=30",
-      ],
-    },
-  ]
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const response = await apiClient.get("/admin/flash-sales", {
+          params: {
+            search: searchQuery,
+            page: currentPage,
+          },
+        })
+
+        const formattedData = response.data.data.map((item) => ({
+          id: item.promotion_id,
+          promotionName: item.name,
+          status: item.status ? "Active" : "Inactive",
+          startDate: new Date(item.start),
+          endDate: new Date(item.end),
+          products: [], // ดึงภาพสินค้าเพิ่มทีหลังได้
+        }))
+
+        setFlashSalesData(formattedData)
+        setTotalItems(response.data.pagination.total)
+      } catch (err) {
+        console.error("Error fetching flash sales:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [searchQuery, currentPage])
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1)
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1)
   }
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1)
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1)
   }
 
   const handleAddFlashSale = () => {
-    // Implement add flash sale functionality
-    console.log("Add flash sale clicked")
+    window.location.href = "/admin/flash-sales/add"
   }
 
   const handleFilter = () => {
-    // Implement filter functionality
     console.log("Filter clicked")
   }
 
-  // Breadcrumb items for the Flash Sales page
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Flash Sales", href: "/flash-sales" },
+    { label: "Flash Sales", href: "/admin/flash-sales" },
   ]
 
   return (
@@ -89,7 +78,10 @@ function FlashSalesListPage() {
             <Input
               placeholder="Search Promotions..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
               className="pl-8"
             />
           </div>
@@ -104,12 +96,16 @@ function FlashSalesListPage() {
           </div>
         </div>
 
-        <FlashSalesTable initialData={flashSalesData} />
+        {loading ? (
+          <div className="text-center py-10">Loading...</div>
+        ) : (
+          <FlashSalesTable initialData={flashSalesData} />
+        )}
 
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
-            {totalItems}
+            Showing {(currentPage - 1) * itemsPerPage + 1}-
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={currentPage === 1}>
@@ -124,4 +120,5 @@ function FlashSalesListPage() {
     </MainLayout>
   )
 }
+
 export default FlashSalesListPage

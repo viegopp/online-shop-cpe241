@@ -10,11 +10,12 @@ import {
   ProductReviewDetailPage,
 } from "./pages/Admin/ProductReviews";
 import TrackOrderPage from "./pages/Admin/TrackOrders";
+import TrackOrdersDetailPage from "./pages/Admin/TrackOrdersDetail";
 import ProductEditPage from "./pages/Admin/ProductEdit";
 import CustomerManagementPage from "./pages/Admin/CustomerManagement";
 import AdminManagementPage from "./pages/Admin/AdminManagement";
 import AdminProfilePage from "./pages/Admin/AdminProfile";
-
+import ReportPage from "./pages/Admin/Report";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./auth/AuthProvider";
 
@@ -90,6 +91,14 @@ const ROUTES = {
       ),
     },
     {
+      path: "admin/orders/track/:orderId",
+      element: (
+        <PrivateRoute requiredRole="Super Admin">
+          <TrackOrdersDetailPage />
+        </PrivateRoute>
+      ),
+    },
+    {
       path: "admin/user/customers",
       element: (
         <PrivateRoute requiredRole="Super Admin">
@@ -112,6 +121,15 @@ const ROUTES = {
           <AdminProfilePage />
         </PrivateRoute>
       ),
+    },
+    {
+      path: "/admin/report",
+      element: (
+        <PrivateRoute requiredRole="Super Admin">
+          <ReportPage />
+        </PrivateRoute>
+      ),
+
     },
   ],
   REDIRECTS: [

@@ -21,6 +21,7 @@ use App\Http\Controllers\Customer\CustomerSearchPageController;
 use App\Http\Controllers\Customer\CustomerProductDetailController;
 use App\Http\Controllers\Customer\CustomerCartPageController;
 use App\Http\Controllers\Customer\CustomerFlashSalePageController;
+use App\Http\Controllers\Customer\CustomerProfileManagementController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -119,6 +120,12 @@ Route::middleware([Cors::class])->group(function () {
         Route::delete('cart/remove', [CustomerCartPageController::class, 'removeFromCart']);
         Route::get('flash-sale/promotions', [CustomerFlashSalePageController::class, 'getActivePromotions']);
         Route::get('flash-sale/products', [CustomerFlashSalePageController::class, 'getFlashSaleProducts']);
+        Route::get('profile/{user_id}', [CustomerProfileManagementController::class, 'getProfile']);
+        Route::put('profile/{user_id}/update', [CustomerProfileManagementController::class, 'updateProfile']);
+        Route::post('profile/address/add', [CustomerProfileManagementController::class, 'addAddress']);
+        Route::put('profile/address/{address_id}/update', [CustomerProfileManagementController::class, 'updateAddress']);
+        Route::delete('profile/address/remove', [CustomerProfileManagementController::class, 'deleteAddress']);
+
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

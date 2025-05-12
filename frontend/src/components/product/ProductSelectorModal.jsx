@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import apiClient from "../api/AxiosInterceptor"
+import apiClient from "../../api/AxiosInterceptor"
 
 const ProductSelectorModal = ({ isOpen, onClose, onSelect }) => {
   const [products, setProducts] = useState([])

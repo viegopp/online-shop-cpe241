@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Plus, Trash2 } from "lucide-react"
-import ProductSelectorModal from "./ProductSelectorModal"
+import ProductSelectorModal from "../product/ProductSelectorModal"
+
 
 const FlashSaleForm = ({ initialData, mode = "add", onSubmit }) => {
   const [formData, setFormData] = useState({

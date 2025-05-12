@@ -19,6 +19,7 @@ use App\Http\Controllers\Customer\CustomerAuthController;
 use App\Http\Controllers\Customer\CustomerHomePageController;
 use App\Http\Controllers\Customer\CustomerSearchPageController;
 use App\Http\Controllers\Customer\CustomerProductDetailController;
+use App\Http\Controllers\Customer\CustomerCartPageController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -111,6 +112,7 @@ Route::middleware([Cors::class])->group(function () {
         Route::get('homepage/products/flashsales', [CustomerHomePageController::class, 'getFlashSales']);
         Route::get('search', [CustomerSearchPageController::class, 'searchProducts']);
         Route::get('product/{product_id}', [CustomerProductDetailController::class, 'getProductDetailByID']);
+        Route::get('cart/{customer_id}', [CustomerCartPageController::class, 'getCartDetailsByCustomerID']);
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

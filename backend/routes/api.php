@@ -20,6 +20,7 @@ use App\Http\Controllers\Customer\CustomerHomePageController;
 use App\Http\Controllers\Customer\CustomerSearchPageController;
 use App\Http\Controllers\Customer\CustomerProductDetailController;
 use App\Http\Controllers\Customer\CustomerCartPageController;
+use App\Http\Controllers\Customer\CustomerFlashSalePageController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -116,6 +117,8 @@ Route::middleware([Cors::class])->group(function () {
         Route::post('cart/add', [CustomerCartPageController::class, 'addToCart']);
         Route::put('cart/update', [CustomerCartPageController::class, 'updateCartItemQuantity']);
         Route::delete('cart/remove', [CustomerCartPageController::class, 'removeFromCart']);
+        Route::get('flash-sale/promotions', [CustomerFlashSalePageController::class, 'getActivePromotions']);
+        Route::get('flash-sale/products', [CustomerFlashSalePageController::class, 'getFlashSaleProducts']);
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

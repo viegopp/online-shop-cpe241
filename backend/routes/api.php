@@ -25,6 +25,7 @@ use App\Http\Controllers\Customer\CustomerProfileManagementController;
 use App\Http\Controllers\Customer\CustomerCheckoutPageController;
 use App\Http\Controllers\Customer\CustomerConfirmationPageController;
 use App\Http\Controllers\Customer\CustomerMyOrderPageController;
+use App\Http\Controllers\Customer\CustomerOrderDetailController;
 
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DataController;
@@ -136,6 +137,7 @@ Route::middleware([Cors::class])->group(function () {
         Route::post('checkout/placeorder', [CustomerCheckoutPageController::class, 'placeOrder']);
         Route::get('confirmation/{order_id}', [CustomerConfirmationPageController::class, 'getConfirmationInfo']);
         Route::get('{customer_id}/orders', [CustomerMyOrderPageController::class, 'getCustomerOrders']);
+        Route::get('orders/{order_id}/detail', [CustomerOrderDetailController::class, 'getOrderDetail']);
 
         Route::middleware('customer.auth')->group(function () {
             Route::post('logout', [LogoutController::class, 'CustomerLogout']);

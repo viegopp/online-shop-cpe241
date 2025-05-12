@@ -6,17 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerMyOrderPageController extends Controller
 {
-    public function getCustomerOrders($customer_id, Request $request)
+    public function getCustomerOrders(Request $request)
     {
+        $token = $request->bearerToken();
+        $customer = Cache::get("customer_token:$token");
+        $customer_id = $customer['customer_id'];   
+
         $validator = Validator::make(
             array_merge($request->all(), ['customer_id' => $customer_id]),
             [
-                'customer_id' => 'required|integer|exists:customers,customer_id',
                 'page' => 'nullable|integer|min:1',
-                'per_page' => 'nullable|integer|min:1|max:100'
             ]
         );
 
@@ -29,7 +32,7 @@ class CustomerMyOrderPageController extends Controller
         }
 
         $page = max((int)$request->input('page', 1), 1);
-        $perPage = (int)$request->input('per_page', 5);
+        $perPage = 5;
         $offset = ($page - 1) * $perPage;
 
         try {

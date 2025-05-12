@@ -10,9 +10,13 @@ use Illuminate\Support\Facades\Cache;
 
 class CustomerCartPageController extends Controller
 {
-    public function getCartDetailsByCustomerID($customer_id)
+    public function getCartDetailsByCustomerID(Request $request)
     {
         try {
+            $token = $request->bearerToken();
+            $customer = Cache::get("customer_token:$token");
+            $customer_id = $customer['customer_id'];    
+
             $cartItems = DB::select("
                 SELECT 
                     ci.product_id,
@@ -65,27 +69,30 @@ class CustomerCartPageController extends Controller
 
     public function updateCartItemQuantity(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'customer_id' => 'required|integer|exists:customers,customer_id',
-            'product_id'  => 'required|string|exists:products,product_id',
-            'quantity'    => 'required|integer|min:1',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
+            $token = $request->bearerToken();
+            $customer = Cache::get("customer_token:$token");
+            $customer_id = $customer['customer_id'];
+    
+            $validator = Validator::make($request->all(), [
+                'product_id'  => 'required|string|exists:products,product_id',
+                'quantity'    => 'required|integer|min:1',
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            
             // Check if the item exists in the cart first
             $exists = DB::selectOne("
                 SELECT 1 FROM cart_items
                 WHERE customer_id = ? AND product_id = ?
             ", [
-                $request->customer_id,
+                $customer_id,
                 $request->product_id
             ]);
 
@@ -103,7 +110,7 @@ class CustomerCartPageController extends Controller
                 WHERE customer_id = ? AND product_id = ?
             ", [
                 $request->quantity,
-                $request->customer_id,
+                $customer_id,
                 $request->product_id
             ]);
 
@@ -122,28 +129,31 @@ class CustomerCartPageController extends Controller
 
     public function removeFromCart(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'customer_id' => 'required|integer|exists:customers,customer_id',
-            'product_id'  => 'required|string|exists:products,product_id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         DB::statement("START TRANSACTION");
 
         try {
+            $token = $request->bearerToken();
+            $customer = Cache::get("customer_token:$token");
+            $customer_id = $customer['customer_id'];    
+    
+    
+            $validator = Validator::make($request->all(), [
+                'product_id'  => 'required|string|exists:products,product_id',
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }    
 
             $exists = DB::selectOne("
             SELECT 1 FROM cart_items
             WHERE customer_id = ? AND product_id = ?
             ", [
-                $request->customer_id,
+                $customer_id,
                 $request->product_id
             ]);
 
@@ -157,7 +167,7 @@ class CustomerCartPageController extends Controller
             $deleted = DB::delete("
                 DELETE FROM cart_items
                 WHERE customer_id = ? AND product_id = ?
-            ", [$request->customer_id, $request->product_id]);
+            ", [$customer_id, $request->product_id]);
 
             DB::statement("COMMIT");
 

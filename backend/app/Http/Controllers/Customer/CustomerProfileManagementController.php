@@ -6,11 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerProfileManagementController extends Controller
 {
-    public function getProfile($customer_id)
+    public function getProfile(Request $request)
     {
+        $token = $request->bearerToken();
+        $customer = Cache::get("customer_token:$token");
+        $customer_id = $customer['customer_id'];   
+
         try {
             $profile = DB::selectOne("SELECT 
                 c.customer_id,
@@ -60,8 +65,12 @@ class CustomerProfileManagementController extends Controller
         }
     }
 
-    public function updateProfile(Request $request, $user_id)
+    public function updateProfile(Request $request)
     {
+        $token = $request->bearerToken();
+        $customer = Cache::get("customer_token:$token");
+        $user_id = $customer['user_id'];   
+
         $validator = Validator::make($request->all(), [
             'first_name'    => 'required|string|max:255',
             'last_name'     => 'required|string|max:255',
